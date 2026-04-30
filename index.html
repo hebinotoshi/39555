@@ -1,0 +1,139 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.wrap{font-family:var(--font-sans);padding:1rem 0;max-width:660px;}
+.badge{display:inline-block;font-size:11px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-secondary);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:3px 10px;margin-bottom:14px;}
+.instr{font-size:13px;color:var(--color-text-secondary);line-height:1.6;padding:10px 13px;background:var(--color-background-secondary);border-left:2px solid var(--color-border-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;margin-bottom:18px;}
+.passage{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.1rem 1.3rem;margin-bottom:20px;font-size:14px;line-height:1.9;color:var(--color-text-primary);}
+.passage h3{font-size:15px;font-weight:500;margin-bottom:10px;color:var(--color-text-primary);}
+.passage p{margin-bottom:.7rem;}
+.passage p:last-child{margin-bottom:0;}
+.fn{font-size:12px;color:var(--color-text-secondary);margin-top:10px;border-top:0.5px solid var(--color-border-tertiary);padding-top:8px;}
+.qblock{margin-bottom:18px;}
+.qnum{font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.qtext{font-size:14px;color:var(--color-text-primary);line-height:1.65;margin-bottom:10px;}
+.choices{display:flex;flex-direction:column;gap:6px;}
+.ch{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;font-size:13px;color:var(--color-text-primary);text-align:left;font-family:var(--font-sans);width:100%;transition:background .1s,border-color .1s;}
+.ch:hover:not(:disabled){background:var(--color-background-secondary);border-color:var(--color-border-secondary);}
+.ch .cn{font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);min-width:14px;flex-shrink:0;padding-top:1px;}
+.ch.cor{background:#EAF3DE;border-color:#639922;color:#27500A;}
+.ch.cor .cn{color:#3B6D11;}
+.ch.wrn{background:#FCEBEB;border-color:#E24B4A;color:#791F1F;}
+.ch.wrn .cn{color:#A32D2D;}
+.ch:disabled{cursor:default;}
+.fbx{margin-top:8px;padding:8px 12px;border-radius:var(--border-radius-md);font-size:13px;display:none;line-height:1.5;}
+.fbx.ok{display:block;background:#EAF3DE;color:#27500A;}
+.fbx.ng{display:block;background:#FCEBEB;color:#791F1F;}
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:14px 0;}
+.score-wrap{text-align:center;padding:1.5rem 0 .5rem;}
+.score-num{font-size:48px;font-weight:500;color:var(--color-text-primary);line-height:1;}
+.score-sub{font-size:14px;color:var(--color-text-secondary);margin-top:4px;}
+.score-msg{font-size:16px;color:var(--color-text-primary);margin-top:10px;}
+.prog{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.prog-bar{flex:1;height:4px;background:var(--color-background-secondary);border-radius:99px;}
+.prog-fill{height:4px;background:var(--color-text-primary);border-radius:99px;transition:width .3s;}
+.prog-label{font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);white-space:nowrap;}
+.retry-btn{margin-top:16px;padding:9px 22px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;cursor:pointer;font-family:var(--font-sans);}
+.retry-btn:hover{background:var(--color-background-secondary);}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Eiken Grade 3 reading comprehension quiz about Marie Curie</h2>
+  <div class="badge">3級 · Reading comprehension</div>
+  <div class="instr">Read the passage carefully. Then choose the best answer for each question (26) to (30).</div>
+
+  <div class="passage">
+    <h3>Marie Curie</h3>
+    <p>Marie Curie was one of the greatest scientists in history. She was born in Warsaw, Poland, in 1867. When she was young, her family did not have much money, but her parents always encouraged her to study hard. Curie loved reading and learning, and she was very good at science and mathematics at school.</p>
+    <p>In 1891, Curie moved to Paris, France, to study at a famous university. At that time, it was very unusual for women to study science at university. She worked extremely hard and finished her studies at the top of her class. After university, she began doing research* with her husband, Pierre Curie. Together, they discovered two new chemical elements,* polonium and radium, in 1898.</p>
+    <p>In 1903, Marie and Pierre Curie won the Nobel Prize* in Physics for their research. Marie became the first woman ever to win a Nobel Prize. Sadly, Pierre died in an accident in 1906. Marie continued her research alone and won a second Nobel Prize in Chemistry in 1911. She became the first person in history to win Nobel Prizes in two different subjects.</p>
+    <p>Curie not only worked in her laboratory but also helped people during World War One.* She created small X-ray machines that doctors could use near the battlefield to help injured soldiers. Because of her work, many lives were saved. She continued working until she died in 1934. Today, people around the world remember her as a symbol of hard work, courage, and the power of science.</p>
+    <div class="fn">*research: 研究　　*chemical element: 元素　　*Nobel Prize: ノーベル賞　　*World War One: 第一次世界大戦</div>
+  </div>
+
+  <div class="prog">
+    <div class="prog-bar"><div class="prog-fill" id="pf" style="width:0%"></div></div>
+    <div class="prog-label" id="pl">0 / 5</div>
+  </div>
+
+  <div id="qarea"></div>
+
+  <div class="score-wrap" id="scorearea" style="display:none;">
+    <div class="score-num" id="snum"></div>
+    <div class="score-sub" id="ssub"></div>
+    <div class="score-msg" id="smsg"></div>
+    <button class="retry-btn" onclick="restart()">Try again</button>
+  </div>
+</div>
+
+<script>
+const Qs=[
+  {n:26,q:"When Marie Curie was young, she",ch:["moved to Paris with her husband.","was very good at science and mathematics.","did not enjoy reading or studying.","won a prize for her research."],ans:1},
+  {n:27,q:"Why was it unusual for Marie Curie to study at university in Paris?",ch:["The university was too far from her home.","She did not speak French well.","Women did not usually study science at university then.","Science was not offered at that university."],ans:2},
+  {n:28,q:"What did Marie and Pierre Curie discover together?",ch:["A new kind of X-ray machine.","Two new chemical elements.","A prize for women in science.","A new way to teach mathematics."],ans:1},
+  {n:29,q:"What did Curie do during World War One?",ch:["She wrote a book about soldiers.","She discovered a new element.","She created X-ray machines to help injured soldiers.","She won her second Nobel Prize."],ans:2},
+  {n:30,q:"What is this story mainly about?",ch:["The history of universities in France.","A scientist who made important discoveries and helped people.","How X-ray machines were invented.","The Nobel Prize and how it is given."],ans:1},
+];
+
+const hints=[
+  "Look at the first paragraph. It describes what she was good at as a child.",
+  "The second paragraph says 'it was very unusual for women to study science at university.'",
+  "Check the second paragraph — it mentions a specific discovery in 1898.",
+  "The fourth paragraph talks about World War One and what Curie created.",
+  "Think about the whole story — what is it about overall?",
+];
+
+let done={},score=0;
+
+function render(){
+  const el=document.getElementById('qarea');
+  el.innerHTML=Qs.map((q,i)=>{
+    const d=done[q.n];
+    return `<div class="qblock" id="qb${q.n}">
+      <div class="qnum">Question (${q.n})</div>
+      <div class="qtext">${q.q}</div>
+      <div class="choices">${q.ch.map((c,ci)=>`
+        <button class="ch${d?(ci===q.ans?' cor':ci===d.picked&&d.picked!==q.ans?' wrn':''):''}" 
+          onclick="pick(${q.n},${ci})" ${d?'disabled':''} id="ch${q.n}_${ci}">
+          <span class="cn">${ci+1}</span>${c}
+        </button>`).join('')}
+      </div>
+      ${d?`<div class="fbx ${d.picked===q.ans?'ok':'ng'}">${d.picked===q.ans?'✓ Correct! Well done.':'✗ The answer is "'+q.ch[q.ans]+'" — '+hints[i]}</div>`:''}
+    </div>${i<Qs.length-1?'<hr class="divider">':''}`;
+  }).join('');
+  updateProg();
+}
+
+function pick(qn,ci){
+  const q=Qs.find(x=>x.n===qn);
+  if(done[qn])return;
+  done[qn]={picked:ci};
+  if(ci===q.ans)score++;
+  render();
+  if(Object.keys(done).length===Qs.length){
+    setTimeout(()=>{
+      document.getElementById('scorearea').style.display='block';
+      const pct=Math.round(score/5*100);
+      document.getElementById('snum').textContent=score+'/5';
+      document.getElementById('ssub').textContent=pct+'% correct';
+      document.getElementById('smsg').textContent=pct===100?'Perfect score! Excellent reading!':pct>=60?'Good job! Keep practicing!':'Read the passage again and try once more!';
+      document.getElementById('scorearea').scrollIntoView({behavior:'smooth',block:'center'});
+    },400);
+  }
+}
+
+function updateProg(){
+  const n=Object.keys(done).length;
+  document.getElementById('pf').style.width=(n/5*100)+'%';
+  document.getElementById('pl').textContent=n+' / 5';
+}
+
+function restart(){
+  done={};score=0;
+  document.getElementById('scorearea').style.display='none';
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+render();
+</script>
