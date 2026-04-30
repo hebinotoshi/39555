@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="progress">
+    <div class="progress-fill" id="pf"></div>
+  </div>
+  <div class="progress-text" id="pl">0 / 1</div>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Marie Curie</h2>
+    <p>Marie Curie was one of the greatest scientists in history. She was born in Warsaw, Poland.</p>
+  </div>
+
+  <div id="qarea"></div>
+
+  <div id="scorearea" class="card center" style="display:none;">
+    <h2 id="snum"></h2>
+    <p id="ssub"></p>
+    <button onclick="restart()" class="btn-secondary">Try again</button>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
