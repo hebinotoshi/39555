@@ -1,91 +1,18 @@
 :root{
-  --green:#58cc02;
-  --green-dark:#46a302;
-  --bg:#f7f7f7;
-  --card:#ffffff;
-  --text:#333;
+--green:#58cc02;
+--bg:#f7f7f7;
+--card:#fff;
 }
 
-*{box-sizing:border-box;margin:0;padding:0;}
-
-body{
-  font-family:system-ui, sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-
-.center{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
-}
-
-.container{
-  max-width:700px;
-  margin:20px auto;
-  padding:0 16px;
-}
-
-.card{
-  background:var(--card);
-  border-radius:16px;
-  padding:20px;
-  margin-bottom:20px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.05);
-}
-
-.landing{text-align:center;}
-
-.btn-primary{
-  display:inline-block;
-  margin-top:20px;
-  background:var(--green);
-  color:white;
-  padding:12px 24px;
-  border-radius:12px;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-.btn-secondary{
-  padding:10px 20px;
-  border:none;
-  border-radius:10px;
-  background:#ddd;
-  cursor:pointer;
-}
-
-.topbar{padding:16px;}
-
-.progress{
-  height:10px;
-  background:#ddd;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-.progress-fill{
-  height:100%;
-  width:0%;
-  background:var(--green);
-}
-
-.progress-text{
-  margin-top:6px;
-  font-size:14px;
-}
-
-.ch{
-  display:block;
-  width:100%;
-  padding:12px;
-  margin-bottom:8px;
-  border-radius:12px;
-  border:2px solid #ddd;
-  background:white;
-  cursor:pointer;
-}
-
+body{font-family:sans-serif;background:var(--bg);margin:0;}
+.container{max-width:700px;margin:20px auto;padding:0 16px;}
+.card{background:#fff;padding:20px;border-radius:16px;margin-bottom:20px;}
+.btn-primary{background:var(--green);color:#fff;padding:12px;border:none;border-radius:12px;width:100%;}
+.btn-secondary{padding:10px;border:none;border-radius:10px;}
+.ch{display:block;width:100%;margin:8px 0;padding:12px;border-radius:12px;border:2px solid #ddd;}
+.ch.selected{border-color:var(--green);}
 .ch.correct{background:#d7ffb8;}
 .ch.wrong{background:#ffd6d6;}
+.topbar{padding:10px;}
+.progress{height:10px;background:#ddd;border-radius:10px;}
+.progress-fill{height:100%;background:var(--green);width:0%;}

@@ -1,43 +1,56 @@
 const Qs=[
-  {n:1,q:"Where was Marie Curie born?",
-   ch:["Paris","Warsaw","London","Berlin"],ans:1},
+{q:"When Marie Curie was young, she",ch:["moved to Paris","was very good at science","did not study","won prize"],ans:1},
+{q:"Why unusual?",ch:["far","language","women didn't study science","no science"],ans:2},
+{q:"What discovered?",ch:["xray","elements","prize","math"],ans:1},
+{q:"WW1?",ch:["book","element","xray machines","prize"],ans:2},
+{q:"Main idea?",ch:["universities","scientist helped people","xray","nobel"],ans:1}
 ];
 
-let done={},score=0;
+let current=0,score=0,selected=null;
 
 function render(){
-  const el=document.getElementById('qarea');
-  el.innerHTML=Qs.map(q=>{
-    return `<div class="qblock">
-      <div class="qtext">${q.q}</div>
-      ${q.ch.map((c,i)=>`
-        <button class="ch" onclick="pick(${q.n},${i})">${c}</button>
-      `).join('')}
+  const q=Qs[current];
+  document.getElementById("qarea").innerHTML=
+    `<div class="card">
+      <div>${q.q}</div>
+      ${q.ch.map((c,i)=>`<button class="ch" onclick="select(${i})">${c}</button>`).join("")}
     </div>`;
-  }).join('');
+  updateProg();
 }
 
-function pick(qn,ci){
-  const q=Qs.find(x=>x.n===qn);
-  if(done[qn])return;
-  done[qn]=true;
-
-  const buttons=document.querySelectorAll(".ch");
-  buttons.forEach((b,i)=>{
-    if(i===q.ans) b.classList.add("correct");
-    else if(i===ci) b.classList.add("wrong");
+function select(i){
+  selected=i;
+  document.querySelectorAll(".ch").forEach((b,idx)=>{
+    b.classList.toggle("selected",idx===i);
   });
+}
 
-  if(ci===q.ans) score++;
-  document.getElementById('pf').style.width="100%";
-  document.getElementById('pl').textContent="1 / 1";
+document.getElementById("checkBtn").onclick=()=>{
+  if(selected===null) return;
+  const q=Qs[current];
+  const buttons=document.querySelectorAll(".ch");
+  buttons[q.ans].classList.add("correct");
+  if(selected!==q.ans) buttons[selected].classList.add("wrong");
+  if(selected===q.ans) score++;
 
   setTimeout(()=>{
-    document.getElementById('scorearea').style.display='block';
-    document.getElementById('snum').textContent=score+"/1";
+    current++;
+    selected=null;
+    if(current<Qs.length) render();
+    else showScore();
   },800);
+};
+
+function updateProg(){
+  document.getElementById("pf").style.width=((current)/Qs.length*100)+"%";
+  document.getElementById("pl").textContent=(current+1)+" / "+Qs.length;
 }
 
-function restart(){ location.reload(); }
+function showScore(){
+  document.getElementById("scorearea").style.display="block";
+  document.getElementById("snum").textContent=score+"/"+Qs.length;
+}
+
+function restart(){location.reload();}
 
 render();
