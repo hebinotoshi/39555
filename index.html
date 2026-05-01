@@ -3,12 +3,22 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 .wrap{font-family:var(--font-sans);padding:1.5rem 1rem 2rem 2rem;max-width:660px;}
 .badge{display:inline-block;font-size:14px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-secondary);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:5px 14px;margin-bottom:20px;}
+
+/* STORY SELECTOR */
+.story-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
+.stab{padding:8px 16px;border:0.5px solid var(--color-border-tertiary);border-radius:99px;font-size:15px;background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;font-family:var(--font-sans);transition:all .12s;}
+.stab:hover{border-color:var(--color-border-secondary);color:var(--color-text-primary);}
+.stab.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary);}
+.stab.done{border-color:#639922;color:#27500A;background:#EAF3DE;}
+.stab.done.active{background:#27500A;color:#fff;}
+
 .instr{font-size:17px;color:var(--color-text-secondary);line-height:1.7;padding:14px 18px;background:var(--color-background-secondary);border-left:3px solid var(--color-border-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;margin-bottom:26px;}
 .passage{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.8rem 2rem;margin-bottom:30px;font-size:18px;line-height:2.1;color:var(--color-text-primary);}
-.passage h3{font-size:22px;font-weight:500;margin-bottom:16px;color:var(--color-text-primary);}
+.passage h3{font-size:22px;font-weight:500;margin-bottom:16px;}
 .passage p{margin-bottom:1.1rem;}
 .passage p:last-child{margin-bottom:0;}
 .fn{font-size:15px;color:var(--color-text-secondary);margin-top:16px;border-top:0.5px solid var(--color-border-tertiary);padding-top:12px;line-height:2;}
+
 .qblock{margin-bottom:30px;padding-left:6px;}
 .qnum{font-size:14px;font-family:var(--font-mono);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
 .qtext{font-size:19px;color:var(--color-text-primary);line-height:1.7;margin-bottom:16px;font-weight:500;}
@@ -25,115 +35,248 @@
 .fbx.ok{display:block;background:#EAF3DE;color:#27500A;}
 .fbx.ng{display:block;background:#FCEBEB;color:#791F1F;}
 .divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:26px 0;}
-.score-wrap{text-align:center;padding:2.5rem 0 1rem;}
-.score-num{font-size:64px;font-weight:500;color:var(--color-text-primary);line-height:1;}
-.score-sub{font-size:18px;color:var(--color-text-secondary);margin-top:8px;}
-.score-msg{font-size:20px;color:var(--color-text-primary);margin-top:14px;}
+
 .prog{display:flex;align-items:center;gap:14px;margin-bottom:26px;}
 .prog-bar{flex:1;height:6px;background:var(--color-background-secondary);border-radius:99px;}
 .prog-fill{height:6px;background:var(--color-text-primary);border-radius:99px;transition:width .3s;}
 .prog-label{font-size:15px;font-family:var(--font-mono);color:var(--color-text-secondary);white-space:nowrap;}
-.retry-btn{margin-top:22px;padding:12px 30px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:17px;cursor:pointer;font-family:var(--font-sans);}
+
+.score-wrap{text-align:center;padding:2.5rem 0 1rem;}
+.score-num{font-size:64px;font-weight:500;color:var(--color-text-primary);line-height:1;}
+.score-sub{font-size:18px;color:var(--color-text-secondary);margin-top:8px;}
+.score-msg{font-size:20px;color:var(--color-text-primary);margin-top:14px;}
+.total-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+.tot-pill{padding:8px 16px;border:0.5px solid var(--color-border-tertiary);border-radius:99px;font-size:15px;background:var(--color-background-secondary);color:var(--color-text-secondary);}
+.tot-pill strong{color:var(--color-text-primary);}
+
+.btn-row{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap;}
+.retry-btn{padding:12px 26px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:17px;cursor:pointer;font-family:var(--font-sans);}
 .retry-btn:hover{background:var(--color-background-secondary);}
+.next-story-btn{padding:12px 26px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-text-primary);color:var(--color-background-primary);font-size:17px;cursor:pointer;font-family:var(--font-sans);}
+.next-story-btn:hidden{display:none;}
+
+.total-score-wrap{text-align:center;padding:2.5rem 1rem;}
+.trophy{font-size:56px;margin-bottom:12px;}
 </style>
 
 <div class="wrap">
-  <h2 class="sr-only">Eiken Grade 3 reading comprehension quiz about Marie Curie</h2>
-  <div class="badge">3級 · Reading comprehension</div>
-  <div class="instr">Read the passage carefully. Then choose the best answer for each question (26) to (30).</div>
+  <h2 class="sr-only">Eiken Grade 3 reading comprehension — 5 original stories</h2>
+  <div class="badge">3級 · 5 Reading Passages</div>
 
-  <div class="passage">
-    <h3>Marie Curie</h3>
-    <p>Marie Curie was one of the greatest scientists in history. She was born in Warsaw, Poland, in 1867. When she was young, her family did not have much money, but her parents always encouraged her to study hard. Curie loved reading and learning, and she was very good at science and mathematics at school.</p>
-    <p>In 1891, Curie moved to Paris, France, to study at a famous university. At that time, it was very unusual for women to study science at university. She worked extremely hard and finished her studies at the top of her class. After university, she began doing research* with her husband, Pierre Curie. Together, they discovered two new chemical elements,* polonium and radium, in 1898.</p>
-    <p>In 1903, Marie and Pierre Curie won the Nobel Prize* in Physics for their research. Marie became the first woman ever to win a Nobel Prize. Sadly, Pierre died in an accident in 1906. Marie continued her research alone and won a second Nobel Prize in Chemistry in 1911. She became the first person in history to win Nobel Prizes in two different subjects.</p>
-    <p>Curie not only worked in her laboratory but also helped people during World War One.* She created small X-ray machines that doctors could use near the battlefield to help injured soldiers. Because of her work, many lives were saved. She continued working until she died in 1934. Today, people around the world remember her as a symbol of hard work, courage, and the power of science.</p>
-    <div class="fn">*research: 研究　　*chemical element: 元素　　*Nobel Prize: ノーベル賞　　*World War One: 第一次世界大戦</div>
-  </div>
+  <div class="story-tabs" id="story-tabs"></div>
 
-  <div class="prog">
-    <div class="prog-bar"><div class="prog-fill" id="pf" style="width:0%"></div></div>
-    <div class="prog-label" id="pl">0 / 5</div>
-  </div>
+  <div class="instr" id="instr-box">Read the passage carefully. Then choose the best answer for each question.</div>
 
-  <div id="qarea"></div>
-
-  <div class="score-wrap" id="scorearea" style="display:none;">
-    <div class="score-num" id="snum"></div>
-    <div class="score-sub" id="ssub"></div>
-    <div class="score-msg" id="smsg"></div>
-    <button class="retry-btn" onclick="restart()">Try again</button>
-  </div>
+  <div id="story-area"></div>
 </div>
 
 <script>
-const Qs=[
-  {n:26,q:"When Marie Curie was young, she",ch:["moved to Paris with her husband.","was very good at science and mathematics.","did not enjoy reading or studying.","won a prize for her research."],ans:1},
-  {n:27,q:"Why was it unusual for Marie Curie to study at university in Paris?",ch:["The university was too far from her home.","She did not speak French well.","Women did not usually study science at university then.","Science was not offered at that university."],ans:2},
-  {n:28,q:"What did Marie and Pierre Curie discover together?",ch:["A new kind of X-ray machine.","Two new chemical elements.","A prize for women in science.","A new way to teach mathematics."],ans:1},
-  {n:29,q:"What did Curie do during World War One?",ch:["She wrote a book about soldiers.","She discovered a new element.","She created X-ray machines to help injured soldiers.","She won her second Nobel Prize."],ans:2},
-  {n:30,q:"What is this story mainly about?",ch:["The history of universities in France.","A scientist who made important discoveries and helped people.","How X-ray machines were invented.","The Nobel Prize and how it is given."],ans:1},
+const STORIES = [
+  {
+    title: "Akira Kurosawa",
+    fn: "*director: 映画監督　　*scene: 場面　　*influence: 影響　　*award: 賞",
+    body: `<p>Akira Kurosawa was one of Japan's most famous film directors.* He was born in Tokyo in 1910. When he was a child, his older brother took him to see many movies, and Kurosawa quickly fell in love with cinema. He was also talented at painting and drawing, and these skills later helped him plan the visual style of his films.</p>
+<p>Kurosawa started working in the film industry in the 1930s as an assistant director. He learned a great deal from watching experienced directors at work. In 1943, he made his first film as a director. His early movies were popular in Japan, but he became internationally famous in 1950 with a film called Rashomon. This film won a major award* in Italy and introduced Japanese cinema to the world.</p>
+<p>Throughout his career, Kurosawa made films about samurai, everyday people, and social problems. He always paid great attention to each scene,* sometimes waiting many days for the perfect weather. He also worked very closely with his actors to help them perform their best.</p>
+<p>Many famous directors around the world say that Kurosawa's work had a strong influence* on them. He received a special award at the Academy Awards in 1990 for his lifetime of work. He died in 1998, but his films are still watched and loved by people all over the world today.</p>`,
+    qs:[
+      {q:"What did Kurosawa's brother do when Kurosawa was young?",ch:["He taught him how to paint.","He took him to see many movies.","He helped him become an assistant director.","He gave him a camera as a gift."],ans:1,hint:"Look at the first paragraph."},
+      {q:"How did Kurosawa become internationally famous?",ch:["He won an award in Japan in 1943.","He directed a samurai film in the 1930s.","His film Rashomon won a major award in Italy.","He received a special award at the Academy Awards."],ans:2,hint:"Check the second paragraph for the year 1950."},
+      {q:"What did Kurosawa do to get the perfect scene?",ch:["He asked actors to paint the backgrounds.","He traveled to other countries to film.","He sometimes waited many days for the right weather.","He used special cameras from Italy."],ans:2,hint:"The third paragraph explains how carefully he worked."},
+      {q:"When did Kurosawa receive a special award at the Academy Awards?",ch:["In 1943.","In 1950.","In 1990.","In 1998."],ans:2,hint:"The last paragraph mentions this award."},
+      {q:"What is this story mainly about?",ch:["The history of Japanese cinema.","A famous Japanese film director and his work.","How to become an actor in Japan.","The Academy Awards and how they are chosen."],ans:1,hint:"Think about the whole passage — who is it about?"},
+    ]
+  },
+  {
+    title: "The Honeybee",
+    fn: "*colony: 群れ　　*pollen: 花粉　　*wax: ろう　　*communicate: 伝える",
+    body: `<p>Honeybees are some of the most important insects in the world. They live together in large groups called colonies.* A colony can have more than 50,000 bees. Inside the colony, each bee has a special job. The queen bee lays eggs, worker bees find food and take care of the young, and male bees help the queen.</p>
+<p>Worker bees fly from flower to flower to collect a sweet liquid called nectar and a yellow powder called pollen.* When bees visit flowers, they carry pollen from one flower to another. This process is called pollination, and it helps plants grow and produce fruit. Without bees, many fruits and vegetables that people eat every day would disappear.</p>
+<p>Inside the hive, bees use wax* to build a structure of small six-sided rooms. They store honey and pollen in these rooms, and the young bees grow inside them, too. Making wax takes a lot of energy, so bees must eat a large amount of honey to produce it.</p>
+<p>Bees have an interesting way to communicate* with each other. When a worker bee finds a good source of food, it flies back to the hive and does a kind of dance. The movements of the dance tell other bees where the food is and how far away it is. Scientists have studied this dance for many years and are still learning new things about it today.</p>`,
+    qs:[
+      {q:"What does a worker bee do?",ch:["It lays eggs inside the hive.","It finds food and takes care of young bees.","It builds new hives in the forest.","It protects the queen bee from danger."],ans:1,hint:"Look at the first paragraph — it describes each bee's job."},
+      {q:"Why is pollination important?",ch:["It helps bees find new colonies.","It keeps the hive warm in winter.","It helps plants grow and produce fruit.","It teaches young bees to fly."],ans:2,hint:"The second paragraph explains what pollination does."},
+      {q:"Why do bees need to eat a large amount of honey?",ch:["To stay warm during cold weather.","To teach young bees how to dance.","To help the queen bee lay more eggs.","To produce the wax they use in the hive."],ans:3,hint:"Check the third paragraph about wax."},
+      {q:"How do bees tell each other where food is?",ch:["They make a loud sound.","They leave a trail of pollen.","They do a special dance.","They guide other bees with their wings."],ans:2,hint:"The last paragraph explains how bees communicate."},
+      {q:"What is this story mainly about?",ch:["How to find honeybee hives in nature.","The life and behavior of honeybees.","Why honey is good for people's health.","The different types of insects in the world."],ans:1,hint:"Think about all four paragraphs together."},
+    ]
+  },
+  {
+    title: "The Shinkansen",
+    fn: "*bullet train: 新幹線　　*route: 路線　　*network: ネットワーク　　*punctual: 時間通りの",
+    body: `<p>The Shinkansen, often called the bullet train,* is Japan's famous high-speed railway. It first opened on October 1, 1964, just before the Tokyo Olympic Games. The first route* connected Tokyo and Osaka. At that time, it was the fastest passenger train in the world, traveling at speeds of up to 210 kilometers per hour.</p>
+<p>Since then, Japan's Shinkansen network* has grown very large. Today, bullet trains connect many cities across Japan, from Hokkaido in the north to Kagoshima in the south. New lines continue to be built, making it easier for people to travel around the country quickly and comfortably.</p>
+<p>One of the things Japan is most proud of about the Shinkansen is its punctuality.* The average delay of a Shinkansen train is less than one minute per year. If a train is late, the railway company apologizes and gives passengers a note to show their employer. This level of precision is very unusual in railway systems around the world.</p>
+<p>Safety is also extremely important. In over 60 years of operation, the Shinkansen has never had a fatal accident* caused by a derailment or collision. The trains use advanced technology to detect earthquakes and stop automatically if shaking is felt. Engineers and staff work constantly to make sure every journey is safe for passengers.</p>`,
+    fn: "*bullet train: 新幹線　　*route: 路線　　*punctuality: 時間厳守　　*fatal accident: 死亡事故　　*derailment: 脱線",
+    qs:[
+      {q:"When did the Shinkansen first open?",ch:["In 1954.","In 1960.","In 1964.","In 1972."],ans:2,hint:"The first paragraph gives the exact date."},
+      {q:"What is the Shinkansen network like today?",ch:["It only connects Tokyo and Osaka.","It connects many cities from Hokkaido to Kagoshima.","It runs only in the summer months.","It is the only train system in Japan."],ans:1,hint:"The second paragraph describes how the network has grown."},
+      {q:"What happens if a Shinkansen train is late?",ch:["Passengers get a free ticket for next time.","The train stops at the next station for one hour.","The company apologizes and gives passengers a delay note.","Engineers fix the problem before the train continues."],ans:2,hint:"Check the third paragraph about punctuality."},
+      {q:"How does the Shinkansen protect passengers during earthquakes?",ch:["Passengers move to a special safe car.","The train slows down at all stations.","The train uses technology to detect shaking and stop automatically.","Staff walk through the train and check for damage."],ans:2,hint:"The last paragraph explains the safety technology."},
+      {q:"What is this story mainly about?",ch:["How to ride a Shinkansen for the first time.","Japan's famous high-speed train and why it is special.","The history of railways around the world.","How engineers build fast trains."],ans:1,hint:"Think about all four paragraphs — what is the main topic?"},
+    ]
+  },
+  {
+    title: "Anansi the Spider",
+    fn: "*folk tale: 民話　　*wisdom: 知恵　　*gourd: ひょうたん　　*trick: だます",
+    body: `<p>Anansi is a spider character from the folk tales* of West Africa and the Caribbean. He is one of the most well-known characters in African storytelling. Anansi is not big or strong, but he is extremely clever. He often uses his intelligence and creativity to solve problems and trick* much larger and more powerful animals.</p>
+<p>In many stories, Anansi wants to own all the wisdom* in the world. He collects wisdom from everywhere he goes and puts it into a large gourd.* When the gourd is full, he tries to hide it at the top of a tall tree so that no one else can use it. However, his young son watches him and says, "Father, if you tie the gourd to your back instead of your front, it will be easier to climb." Anansi realizes his son is right and that wisdom cannot belong to just one person.</p>
+<p>Anansi stories were brought to the Caribbean and the Americas by African people during a very difficult time in history. The stories gave people hope and showed that using your mind is more powerful than using force. Anansi became a symbol of survival and cleverness for many communities.</p>
+<p>Today, Anansi is still popular in books, films, and television shows around the world. Many authors have written new Anansi stories, and children everywhere enjoy reading about the clever little spider. These stories continue to teach that intelligence and kindness are more important than size or strength.</p>`,
+    qs:[
+      {q:"Why is Anansi a popular character in folk tales?",ch:["He is very big and strong.","He is extremely clever and uses his intelligence.","He can run faster than any other animal.","He is the king of all the animals."],ans:1,hint:"The first paragraph describes what makes Anansi special."},
+      {q:"What does Anansi try to do with the wisdom he collects?",ch:["He shares it with all the animals.","He sells it at the market.","He hides it at the top of a tall tree.","He puts it in a book for his children."],ans:2,hint:"The second paragraph tells this story."},
+      {q:"What does Anansi learn from his son?",ch:["That climbing tall trees is dangerous.","That wisdom cannot belong to just one person.","That gourds are not strong enough to hold wisdom.","That young people are smarter than old people."],ans:1,hint:"Read the end of the second paragraph carefully."},
+      {q:"Why were Anansi stories important during a difficult time in history?",ch:["They taught people how to grow food.","They gave people hope and showed the power of the mind.","They helped people learn new languages.","They made people laugh and forget their problems."],ans:1,hint:"The third paragraph explains why the stories mattered."},
+      {q:"What is this story mainly about?",ch:["How spiders live in West Africa.","A clever spider character from African folk tales.","The best way to teach children about history.","How to write a good folk tale."],ans:1,hint:"Think about the main character and what all four paragraphs describe."},
+    ]
+  },
+  {
+    title: "Community Gardens",
+    fn: "*community: 地域社会　　*soil: 土　　*volunteer: ボランティア　　*mental health: 精神的な健康",
+    body: `<p>In many cities around the world, people are turning empty pieces of land into community gardens.* A community garden is a shared outdoor space where neighbors come together to grow vegetables, flowers, and herbs. Anyone in the neighborhood can join, and members usually have their own small area to take care of. These gardens are becoming more popular every year.</p>
+<p>Community gardens have many benefits for the people who use them. Growing food helps people save money on groceries, and they can enjoy fresh vegetables that they grew themselves. Working in the soil* and being outside in nature is also very good for mental health.* Many people say that gardening helps them feel relaxed and happy, even when life is busy or stressful.</p>
+<p>These gardens also help bring people together. Neighbors who have never spoken before often become good friends while working side by side in the garden. Many community gardens hold events, such as cooking classes or harvest festivals, where people can share food and enjoy each other's company. Volunteers* help manage the garden and teach new members how to grow different plants.</p>
+<p>Community gardens are good for the environment, too. Plants clean the air and provide homes for birds and insects. In cities, where there are often not many trees or green spaces, a community garden can make the neighborhood more beautiful and cooler in summer. Many city governments now support community gardens because of these benefits, and more people are starting new ones every year.</p>`,
+    qs:[
+      {q:"What is a community garden?",ch:["A garden owned by the city government.","A large farm outside the city.","A shared space where neighbors grow plants together.","A garden inside a school building."],ans:2,hint:"The first paragraph defines a community garden."},
+      {q:"How does gardening help people's mental health?",ch:["It teaches people new science skills.","It helps people feel relaxed and happy.","It gives people more time to exercise.","It helps people save money on medicine."],ans:1,hint:"Check the second paragraph about the benefits of gardening."},
+      {q:"What kind of events do community gardens hold?",ch:["Sports competitions and marathons.","Art exhibitions and music concerts.","Cooking classes and harvest festivals.","Language lessons and book clubs."],ans:2,hint:"The third paragraph mentions specific events."},
+      {q:"Why do city governments support community gardens?",ch:["Because they want to sell the vegetables.","Because they make the city more beautiful and have environmental benefits.","Because they are cheaper than building parks.","Because volunteers pay the government to use the land."],ans:1,hint:"The last paragraph explains why governments support them."},
+      {q:"What is this story mainly about?",ch:["How to start your own vegetable garden at home.","The benefits of community gardens in cities.","Why city governments should build more parks.","The history of farming in urban areas."],ans:1,hint:"All four paragraphs are about the same topic — what is it?"},
+    ]
+  },
 ];
 
-const hints=[
-  "Look at the first paragraph — it describes what she was good at as a child.",
-  "The second paragraph says 'it was very unusual for women to study science at university.'",
-  "Check the second paragraph — it mentions a specific discovery in 1898.",
-  "The fourth paragraph talks about World War One and what Curie created.",
-  "Think about the whole story — what is it about overall?",
-];
+// ── STATE ──
+let current = 0;
+let storyStates = STORIES.map(() => ({ done: {}, score: 0, finished: false }));
 
-let done={},score=0;
+function renderTabs() {
+  const tabEl = document.getElementById('story-tabs');
+  tabEl.innerHTML = STORIES.map((s, i) => {
+    const st = storyStates[i];
+    let cls = 'stab';
+    if (i === current) cls += ' active';
+    if (st.finished) cls += ' done';
+    return `<button class="${cls}" onclick="switchStory(${i})">${i+1}. ${s.title}</button>`;
+  }).join('');
+}
 
-function render(){
-  const el=document.getElementById('qarea');
-  el.innerHTML=Qs.map((q,i)=>{
-    const d=done[q.n];
-    return `<div class="qblock">
-      <div class="qnum">Question (${q.n})</div>
+function switchStory(idx) {
+  current = idx;
+  renderTabs();
+  renderStory();
+}
+
+function renderStory() {
+  const s = STORIES[current];
+  const st = storyStates[current];
+  const answered = Object.keys(st.done).length;
+  const pct = Math.round(answered / s.qs.length * 100);
+
+  let html = `
+    <div class="passage">
+      <h3>${s.title}</h3>
+      ${s.body}
+      <div class="fn">${s.fn}</div>
+    </div>
+    <div class="prog">
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <div class="prog-label">${answered} / ${s.qs.length}</div>
+    </div>`;
+
+  s.qs.forEach((q, qi) => {
+    const qn = `${current}_${qi}`;
+    const d = st.done[qn];
+    html += `<div class="qblock">
+      <div class="qnum">Question (${qi + 1})</div>
       <div class="qtext">${q.q}</div>
-      <div class="choices">${q.ch.map((c,ci)=>`
-        <button class="ch${d?(ci===q.ans?' cor':ci===d.picked&&d.picked!==q.ans?' wrn':''):''}"
-          onclick="pick(${q.n},${ci})" ${d?'disabled':''}>
-          <span class="cn">${ci+1}</span>${c}
+      <div class="choices">${q.ch.map((c, ci) => `
+        <button class="ch${d ? (ci === q.ans ? ' cor' : ci === d.picked && d.picked !== q.ans ? ' wrn' : '') : ''}"
+          onclick="pick(${qi}, ${ci})" ${d ? 'disabled' : ''}>
+          <span class="cn">${ci + 1}</span>${c}
         </button>`).join('')}
       </div>
-      ${d?`<div class="fbx ${d.picked===q.ans?'ok':'ng'}">${d.picked===q.ans?'✓ Correct! Well done.':'✗ The answer is "'+q.ch[q.ans]+'" — '+hints[i]}</div>`:''}
-    </div>${i<Qs.length-1?'<hr class="divider">':''}`;
-  }).join('');
-  updateProg();
-}
+      ${d ? `<div class="fbx ${d.picked === q.ans ? 'ok' : 'ng'}">${d.picked === q.ans ? '✓ Correct! Well done.' : '✗ The answer is "' + q.ch[q.ans] + '" — ' + q.hint}</div>` : ''}
+    </div>${qi < s.qs.length - 1 ? '<hr class="divider">' : ''}`;
+  });
 
-function pick(qn,ci){
-  const q=Qs.find(x=>x.n===qn);
-  if(done[qn])return;
-  done[qn]={picked:ci};
-  if(ci===q.ans)score++;
-  render();
-  if(Object.keys(done).length===Qs.length){
-    setTimeout(()=>{
-      document.getElementById('scorearea').style.display='block';
-      const pct=Math.round(score/5*100);
-      document.getElementById('snum').textContent=score+'/5';
-      document.getElementById('ssub').textContent=pct+'% correct';
-      document.getElementById('smsg').textContent=pct===100?'Perfect score! Excellent reading!':pct>=60?'Good job! Keep practicing!':'Read the passage again and try once more!';
-      document.getElementById('scorearea').scrollIntoView({behavior:'smooth',block:'center'});
-    },400);
+  if (st.finished) {
+    const pct2 = Math.round(st.score / s.qs.length * 100);
+    const msg = pct2 === 100 ? 'Perfect! Excellent reading! 🎉' : pct2 >= 60 ? 'Good job! Keep practicing! 💪' : 'Read the passage again and try once more!';
+    const allDone = storyStates.every(x => x.finished);
+    const nextIdx = current < STORIES.length - 1 ? current + 1 : -1;
+    html += `<div class="score-wrap">
+      <div class="score-num">${st.score}/${s.qs.length}</div>
+      <div class="score-sub">${pct2}% correct</div>
+      <div class="score-msg">${msg}</div>
+      <div class="btn-row">
+        <button class="retry-btn" onclick="retryStory(${current})">Try again</button>
+        ${nextIdx >= 0 && !storyStates[nextIdx].finished ? `<button class="next-story-btn" onclick="switchStory(${nextIdx})">Next story →</button>` : ''}
+        ${allDone ? `<button class="next-story-btn" onclick="showTotal()">See total score →</button>` : ''}
+      </div>
+    </div>`;
   }
+
+  document.getElementById('story-area').innerHTML = html;
 }
 
-function updateProg(){
-  const n=Object.keys(done).length;
-  document.getElementById('pf').style.width=(n/5*100)+'%';
-  document.getElementById('pl').textContent=n+' / 5';
+function pick(qi, ci) {
+  const s = STORIES[current];
+  const st = storyStates[current];
+  const qn = `${current}_${qi}`;
+  if (st.done[qn]) return;
+  st.done[qn] = { picked: ci };
+  if (ci === s.qs[qi].ans) st.score++;
+  if (Object.keys(st.done).length === s.qs.length) {
+    st.finished = true;
+    renderTabs();
+  }
+  renderStory();
+  // scroll to the question
+  setTimeout(() => {
+    const blocks = document.querySelectorAll('.qblock');
+    if (blocks[qi]) blocks[qi].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
 }
 
-function restart(){
-  done={};score=0;
-  document.getElementById('scorearea').style.display='none';
-  render();
-  window.scrollTo({top:0,behavior:'smooth'});
+function retryStory(idx) {
+  storyStates[idx] = { done: {}, score: 0, finished: false };
+  renderTabs();
+  renderStory();
 }
 
-render();
+function showTotal() {
+  const total = storyStates.reduce((s, x) => s + x.score, 0);
+  const max = STORIES.reduce((s, x) => s + x.qs.length, 0);
+  const pct = Math.round(total / max * 100);
+  const msg = pct >= 90 ? 'Outstanding! 🏆' : pct >= 70 ? 'Great work! 🎉' : pct >= 50 ? 'Good effort! Keep studying! 💪' : 'Read the passages again and keep going!';
+  document.getElementById('story-area').innerHTML = `
+    <div class="total-score-wrap">
+      <div class="trophy">🏆</div>
+      <div class="score-num">${total} / ${max}</div>
+      <div class="score-sub">${pct}% correct overall</div>
+      <div class="score-msg" style="margin-bottom:1.5rem;">${msg}</div>
+      <div class="total-bar">
+        ${STORIES.map((s, i) => `<div class="tot-pill">${s.title}: <strong>${storyStates[i].score}/${s.qs.length}</strong></div>`).join('')}
+      </div>
+      <div class="btn-row" style="margin-top:1.5rem;">
+        <button class="retry-btn" onclick="restartAll()">Start again from Story 1</button>
+      </div>
+    </div>`;
+}
+
+function restartAll() {
+  storyStates = STORIES.map(() => ({ done: {}, score: 0, finished: false }));
+  current = 0;
+  renderTabs();
+  renderStory();
+}
+
+// init
+renderTabs();
+renderStory();
 </script>
