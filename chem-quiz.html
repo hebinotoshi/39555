@@ -15,11 +15,8 @@
     --accent: #00ffcc;
     --accent2: #ff4488;
     --accent3: #ffdd00;
-    --accent4: #aa44ff;
     --text: #e0e0ff;
     --text-dim: #7070aa;
-    --hp-player: #00ffcc;
-    --hp-enemy: #ff4488;
     --correct: #00ffcc;
     --wrong: #ff4488;
   }
@@ -37,32 +34,13 @@
     overflow-x: hidden;
   }
 
-  /* Scanline overlay */
   body::before {
     content: '';
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
     pointer-events: none;
     z-index: 1000;
-  }
-
-  /* Starfield background */
-  body::after {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-image:
-      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 30% 55%, rgba(255,255,255,0.2) 0%, transparent 100%),
-      radial-gradient(1px 1px at 50% 25%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 70% 75%, rgba(255,255,255,0.2) 0%, transparent 100%),
-      radial-gradient(1px 1px at 85% 40%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 20% 80%, rgba(255,255,255,0.2) 0%, transparent 100%),
-      radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.2) 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
   }
 
   .container {
@@ -73,7 +51,6 @@
     z-index: 1;
   }
 
-  /* ===== TITLE ===== */
   .title-block {
     text-align: center;
     margin-bottom: 24px;
@@ -81,594 +58,162 @@
   }
   @keyframes titlePulse {
     from { text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent); }
-    to { text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent), 0 0 60px var(--accent); }
+    to { text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent); }
   }
-  .title-jp {
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(14px, 4vw, 22px);
-    color: var(--accent);
-    line-height: 1.6;
-    letter-spacing: 2px;
-  }
-  .title-en {
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(8px, 2.5vw, 13px);
-    color: var(--accent2);
-    letter-spacing: 3px;
-    margin-top: 4px;
-  }
+  .title-jp { font-family: 'Press Start 2P', monospace; font-size: clamp(14px,4vw,22px); color: var(--accent); line-height: 1.6; }
+  .title-en { font-family: 'Press Start 2P', monospace; font-size: clamp(8px,2.5vw,12px); color: var(--accent2); letter-spacing: 3px; margin-top: 4px; }
 
-  /* ===== SCREEN PANELS ===== */
-  .screen {
-    background: var(--panel);
-    border: 3px solid var(--border);
-    border-radius: 4px;
-    padding: 24px 20px;
-    box-shadow: 0 0 30px rgba(0,255,204,0.1), inset 0 0 40px rgba(0,0,0,0.3);
-    display: none;
-  }
+  .screen { background: var(--panel); border: 3px solid var(--border); border-radius: 4px; padding: 24px 20px; box-shadow: 0 0 30px rgba(0,255,204,0.07), inset 0 0 40px rgba(0,0,0,0.3); display: none; }
   .screen.active { display: block; }
 
-  /* ===== MENU SCREEN ===== */
-  .villain-intro {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .villain-sprite {
-    font-size: 64px;
-    display: block;
-    margin: 0 auto 8px;
-    animation: villainFloat 2s ease-in-out infinite;
-    filter: drop-shadow(0 0 12px rgba(255,68,136,0.6));
-  }
-  @keyframes villainFloat {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-  .villain-name {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    color: var(--accent2);
-    margin-bottom: 8px;
-  }
-  .villain-taunt {
-    background: var(--panel2);
-    border: 2px solid var(--accent2);
-    border-radius: 4px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.6;
-    position: relative;
-    margin: 0 8px 20px;
-  }
-  .villain-taunt::before {
-    content: '▲';
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--accent2);
-    font-size: 10px;
-  }
-
-  .menu-label {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    color: var(--accent3);
-    text-align: center;
-    margin-bottom: 14px;
-    letter-spacing: 2px;
-  }
-
-  .category-btn {
-    display: block;
-    width: 100%;
-    background: var(--panel2);
-    border: 2px solid var(--border);
-    color: var(--text);
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    font-family: 'M PLUS Rounded 1c', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    text-align: left;
-    transition: all 0.15s;
-    position: relative;
-    overflow: hidden;
-  }
-  .category-btn::after {
-    content: '▶';
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--accent);
-    font-size: 12px;
-    transition: transform 0.15s;
-  }
-  .category-btn:hover {
-    border-color: var(--accent);
-    background: rgba(0,255,204,0.08);
-    transform: translateX(4px);
-    box-shadow: 0 0 12px rgba(0,255,204,0.2);
-  }
-  .category-btn:hover::after { transform: translateY(-50%) translateX(4px); }
+  /* MENU */
+  .villain-sprite { font-size: 64px; display: block; text-align: center; margin: 0 auto 8px; animation: villainFloat 2s ease-in-out infinite; filter: drop-shadow(0 0 12px rgba(255,68,136,0.6)); }
+  @keyframes villainFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .villain-name { font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--accent2); text-align: center; margin-bottom: 8px; }
+  .villain-taunt { background: var(--panel2); border: 2px solid var(--accent2); border-radius: 4px; padding: 12px 16px; font-size: 13px; color: var(--text); line-height: 1.7; text-align: center; margin: 0 4px 20px; }
+  .menu-label { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--accent3); text-align: center; margin-bottom: 14px; letter-spacing: 2px; }
+  .category-btn { display: block; width: 100%; background: var(--panel2); border: 2px solid var(--border); color: var(--text); padding: 14px 16px; margin-bottom: 10px; cursor: pointer; border-radius: 4px; font-family: 'M PLUS Rounded 1c',sans-serif; font-size: 14px; font-weight: 700; text-align: left; transition: all 0.15s; position: relative; }
+  .category-btn::after { content: '▶'; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 12px; }
+  .category-btn:hover { border-color: var(--accent); background: rgba(0,255,204,0.07); transform: translateX(4px); }
   .category-btn .btn-jp { display: block; font-size: 15px; }
   .category-btn .btn-en { display: block; font-size: 10px; color: var(--text-dim); margin-top: 3px; font-weight: 400; }
   .category-btn.boss { border-color: var(--accent2); }
-  .category-btn.boss:hover { border-color: var(--accent2); background: rgba(255,68,136,0.08); box-shadow: 0 0 12px rgba(255,68,136,0.3); }
   .category-btn.boss::after { color: var(--accent2); }
+  .category-btn.boss:hover { border-color: var(--accent2); background: rgba(255,68,136,0.07); }
 
-  /* ===== BATTLE SCREEN ===== */
-  .battle-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .combatant {
-    flex: 1;
-    min-width: 0;
-  }
-  .combatant-name {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  /* BATTLE */
+  .battle-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .combatant { flex: 1; min-width: 0; }
+  .combatant-name { font-family: 'Press Start 2P', monospace; font-size: 7px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .combatant-name.player { color: var(--accent); }
   .combatant-name.enemy { color: var(--accent2); text-align: right; }
-
-  .hp-bar-wrap {
-    background: #0a0a15;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    height: 12px;
-    position: relative;
-    overflow: hidden;
-  }
-  .hp-bar {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .hp-bar.player { background: linear-gradient(90deg, #009966, var(--hp-player)); }
-  .hp-bar.enemy { background: linear-gradient(90deg, #cc0044, var(--hp-enemy)); float: right; }
-  .hp-text {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    color: var(--text-dim);
-    margin-top: 3px;
-  }
+  .hp-bar-wrap { background: #0a0a15; border: 1px solid var(--border); border-radius: 2px; height: 12px; overflow: hidden; }
+  .hp-bar { height: 100%; border-radius: 2px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+  .hp-bar.player { background: linear-gradient(90deg, #009966, var(--correct)); }
+  .hp-bar.enemy { background: linear-gradient(90deg, #cc0044, var(--wrong)); float: right; }
+  .hp-text { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); margin-top: 3px; }
   .hp-text.enemy { text-align: right; }
+  .vs-block { text-align: center; padding-top: 2px; }
+  .vs-text { font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--accent3); }
+  .score-text { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); margin-top: 4px; }
 
-  .vs-block {
-    text-align: center;
-    padding-top: 4px;
-  }
-  .vs-text {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    color: var(--accent3);
-  }
-  .score-text {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    color: var(--text-dim);
-    margin-top: 4px;
-  }
-
-  /* Sprites in battle */
-  .battle-sprites {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 8px 0 16px;
-    padding: 0 8px;
-  }
-  .sprite {
-    font-size: 48px;
-    transition: transform 0.1s;
-    filter: drop-shadow(0 0 8px rgba(0,255,204,0.4));
-  }
-  .sprite.enemy {
-    filter: drop-shadow(0 0 8px rgba(255,68,136,0.4));
-  }
+  .battle-sprites { display: flex; justify-content: space-between; align-items: center; margin: 6px 0 12px; padding: 0 8px; }
+  .sprite { font-size: 48px; filter: drop-shadow(0 0 8px rgba(0,255,204,0.4)); }
+  .sprite.enemy { filter: drop-shadow(0 0 8px rgba(255,68,136,0.4)); }
   .sprite.shake { animation: shake 0.4s; }
   .sprite.attack { animation: attackMove 0.4s; }
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20% { transform: translateX(-8px); }
-    40% { transform: translateX(8px); }
-    60% { transform: translateX(-6px); }
-    80% { transform: translateX(6px); }
-  }
-  @keyframes attackMove {
-    0%,100% { transform: translateX(0) scale(1); }
-    40% { transform: translateX(30px) scale(1.2); }
-    60% { transform: translateX(20px) scale(1.1); }
-  }
-  @keyframes enemyAttack {
-    0%,100% { transform: translateX(0) scale(1); }
-    40% { transform: translateX(-30px) scale(1.2); }
-    60% { transform: translateX(-20px) scale(1.1); }
-  }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
+  @keyframes attackMove { 0%,100%{transform:translateX(0) scale(1)} 40%{transform:translateX(28px) scale(1.2)} 60%{transform:translateX(18px) scale(1.1)} }
+  @keyframes enemyAttack { 0%,100%{transform:translateX(0) scale(1)} 40%{transform:translateX(-28px) scale(1.2)} 60%{transform:translateX(-18px) scale(1.1)} }
   .sprite.enemy.attack { animation: enemyAttack 0.4s; }
 
-  /* Battle message */
-  .battle-msg {
-    background: var(--panel2);
-    border: 2px solid var(--border);
-    border-radius: 4px;
-    padding: 12px 14px;
-    font-size: 13px;
-    line-height: 1.7;
-    min-height: 64px;
-    margin-bottom: 16px;
-    position: relative;
-  }
-  .battle-msg .msg-en { color: var(--text-dim); font-size: 11px; }
+  .battle-msg { background: var(--panel2); border: 2px solid var(--border); border-radius: 4px; padding: 10px 14px; font-size: 13px; line-height: 1.7; min-height: 52px; margin-bottom: 12px; }
 
-  /* Question */
-  .question-block {
-    background: rgba(0,255,204,0.05);
-    border: 2px solid var(--accent);
-    border-radius: 4px;
-    padding: 14px 16px;
-    margin-bottom: 16px;
-    text-align: center;
-    box-shadow: 0 0 16px rgba(0,255,204,0.1);
-  }
-  .question-label {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    color: var(--accent3);
-    margin-bottom: 8px;
-    letter-spacing: 2px;
-  }
-  .question-main {
-    font-size: clamp(20px, 5vw, 28px);
-    font-weight: 800;
-    color: #fff;
-    line-height: 1.3;
-  }
-  .question-sub {
-    font-size: 12px;
+  .streak-display { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--accent3); text-align: center; min-height: 14px; margin-bottom: 6px; }
+
+  /* QUESTION */
+  .question-block { background: rgba(0,255,204,0.04); border: 2px solid var(--accent); border-radius: 4px; padding: 14px 16px; margin-bottom: 14px; text-align: center; }
+  .question-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--accent3); margin-bottom: 8px; letter-spacing: 2px; }
+  .question-main { font-size: clamp(22px,6vw,30px); font-weight: 800; color: #fff; line-height: 1.3; }
+  .question-category { font-size: 11px; color: var(--text-dim); margin-top: 5px; }
+
+  /* HINT */
+  .hint-row { margin-top: 12px; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .hint-btn {
+    background: transparent;
+    border: 1.5px solid var(--text-dim);
     color: var(--text-dim);
-    margin-top: 4px;
-  }
-  .question-hint {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    color: var(--accent3);
-    margin-top: 8px;
-  }
-
-  /* Choices */
-  .choices {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .choice-btn {
-    background: var(--panel2);
-    border: 2px solid var(--border);
-    color: var(--text);
-    padding: 14px 10px;
-    cursor: pointer;
-    border-radius: 4px;
+    padding: 5px 14px;
+    border-radius: 20px;
     font-family: 'M PLUS Rounded 1c', sans-serif;
-    font-size: clamp(13px, 3.5vw, 16px);
-    font-weight: 700;
-    text-align: center;
-    transition: all 0.12s;
-    line-height: 1.4;
-  }
-  .choice-btn:hover:not(:disabled) {
-    border-color: var(--accent);
-    background: rgba(0,255,204,0.08);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0,255,204,0.2);
-  }
-  .choice-btn:disabled { cursor: default; }
-  .choice-btn.correct {
-    border-color: var(--correct);
-    background: rgba(0,255,204,0.15);
-    color: var(--correct);
-    box-shadow: 0 0 20px rgba(0,255,204,0.3);
-  }
-  .choice-btn.wrong {
-    border-color: var(--wrong);
-    background: rgba(255,68,136,0.15);
-    color: var(--wrong);
-  }
-  .choice-btn .choice-sub {
-    display: block;
-    font-size: 10px;
-    color: var(--text-dim);
-    font-weight: 400;
-    margin-top: 2px;
-  }
-  .choice-btn.correct .choice-sub,
-  .choice-btn.wrong .choice-sub { color: inherit; opacity: 0.7; }
-
-  /* Damage flash */
-  .damage-flash {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    z-index: 999;
-    opacity: 0;
-    transition: opacity 0.1s;
-  }
-  .damage-flash.player-hit { background: rgba(255,68,136,0.25); }
-  .damage-flash.enemy-hit { background: rgba(0,255,204,0.15); }
-  .damage-flash.show { opacity: 1; }
-
-  /* Result screen */
-  .result-emoji {
-    font-size: 80px;
-    display: block;
-    text-align: center;
-    margin-bottom: 12px;
-    animation: resultBounce 0.6s cubic-bezier(0.4,0,0.2,1);
-  }
-  @keyframes resultBounce {
-    0% { transform: scale(0); }
-    60% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-  }
-  .result-title {
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(11px, 3vw, 16px);
-    text-align: center;
-    margin-bottom: 6px;
-    line-height: 1.6;
-  }
-  .result-subtitle {
     font-size: 12px;
-    color: var(--text-dim);
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .rank-block {
-    text-align: center;
-    margin: 16px 0;
-    padding: 16px;
-    border: 2px solid var(--accent3);
-    border-radius: 4px;
-    background: rgba(255,221,0,0.05);
-  }
-  .rank-label {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    color: var(--accent3);
-    margin-bottom: 8px;
-    letter-spacing: 2px;
-  }
-  .rank-value {
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(20px, 6vw, 32px);
-    animation: rankGlow 1.5s ease-in-out infinite alternate;
-  }
-  @keyframes rankGlow {
-    from { text-shadow: 0 0 10px currentColor; }
-    to { text-shadow: 0 0 30px currentColor, 0 0 50px currentColor; }
-  }
-  .rank-name {
-    font-size: 14px;
-    margin-top: 6px;
-    font-weight: 700;
-  }
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin: 16px 0;
-  }
-  .stat-box {
-    background: var(--panel2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 12px;
-    text-align: center;
-  }
-  .stat-val {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 18px;
-    color: var(--accent);
-    display: block;
-  }
-  .stat-label {
-    font-size: 10px;
-    color: var(--text-dim);
-    margin-top: 4px;
-  }
-
-  /* Buttons */
-  .btn-primary {
-    display: block;
-    width: 100%;
-    background: var(--accent);
-    color: #000;
-    border: none;
-    padding: 14px 20px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
     cursor: pointer;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    letter-spacing: 1px;
-    transition: all 0.15s;
-    box-shadow: 0 4px 0 rgba(0,204,160,0.5);
-  }
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 rgba(0,204,160,0.5), 0 0 20px rgba(0,255,204,0.3);
-  }
-  .btn-primary:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 rgba(0,204,160,0.5);
-  }
-  .btn-secondary {
-    display: block;
-    width: 100%;
-    background: transparent;
-    color: var(--text-dim);
-    border: 2px solid var(--border);
-    padding: 12px 20px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    letter-spacing: 1px;
-    transition: all 0.15s;
-  }
-  .btn-secondary:hover {
-    border-color: var(--text-dim);
-    color: var(--text);
-  }
-  .btn-reset {
-    display: block;
-    width: 100%;
-    background: transparent;
-    color: var(--accent2);
-    border: 2px solid var(--accent2);
-    padding: 12px 20px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-top: 8px;
-    letter-spacing: 1px;
-    transition: all 0.15s;
-  }
-  .btn-reset:hover {
-    background: rgba(255,68,136,0.1);
-    box-shadow: 0 0 12px rgba(255,68,136,0.2);
-  }
-
-  /* Progress */
-  .progress-bar-wrap {
-    background: #0a0a15;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    height: 6px;
-    margin-bottom: 10px;
-    overflow: hidden;
-  }
-  .progress-bar {
-    height: 100%;
-    background: var(--accent3);
-    border-radius: 2px;
-    transition: width 0.4s;
-  }
-  .progress-label {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    color: var(--text-dim);
-    text-align: right;
-    margin-bottom: 6px;
-  }
-
-  /* Missed answers review */
-  .missed-list {
-    background: var(--panel2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 12px;
-    margin: 12px 0;
-    max-height: 200px;
-    overflow-y: auto;
-  }
-  .missed-list-title {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    color: var(--accent2);
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-  }
-  .missed-item {
     display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    font-size: 12px;
-    gap: 8px;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
   }
+  .hint-btn:hover:not(.used) { border-color: var(--accent3); color: var(--accent3); }
+  .hint-btn.used { border-color: var(--accent2); color: var(--accent2); cursor: default; }
+  .hint-text { font-size: 13px; color: var(--accent3); font-weight: 700; display: none; }
+  .hint-text.visible { display: inline; }
+  .hint-penalty { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--accent2); display: none; white-space: nowrap; }
+  .hint-penalty.visible { display: inline; }
+
+  /* CHOICES */
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .choice-btn { background: var(--panel2); border: 2px solid var(--border); color: var(--text); padding: 14px 10px; cursor: pointer; border-radius: 4px; font-family: 'M PLUS Rounded 1c',sans-serif; font-size: clamp(13px,3.5vw,17px); font-weight: 700; text-align: center; transition: all 0.12s; line-height: 1.3; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(0,255,204,0.07); transform: translateY(-2px); }
+  .choice-btn:disabled { cursor: default; }
+  .choice-btn.correct { border-color: var(--correct); background: rgba(0,255,204,0.12); color: var(--correct); box-shadow: 0 0 14px rgba(0,255,204,0.22); }
+  .choice-btn.wrong { border-color: var(--wrong); background: rgba(255,68,136,0.12); color: var(--wrong); }
+
+  /* PROGRESS */
+  .progress-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); text-align: right; margin-bottom: 4px; }
+  .progress-bar-wrap { background: #0a0a15; border: 1px solid var(--border); border-radius: 2px; height: 5px; margin-bottom: 10px; overflow: hidden; }
+  .progress-bar { height: 100%; background: var(--accent3); border-radius: 2px; transition: width 0.4s; }
+
+  /* RESULT */
+  .result-emoji { font-size: 76px; display: block; text-align: center; margin-bottom: 10px; animation: resultBounce 0.5s; }
+  @keyframes resultBounce { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .result-title { font-family: 'Press Start 2P', monospace; font-size: clamp(10px,3vw,15px); text-align: center; margin-bottom: 6px; line-height: 1.7; }
+  .result-subtitle { font-size: 12px; color: var(--text-dim); text-align: center; margin-bottom: 16px; }
+  .rank-block { text-align: center; margin: 14px 0; padding: 14px; border: 2px solid var(--accent3); border-radius: 4px; background: rgba(255,221,0,0.04); }
+  .rank-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--accent3); margin-bottom: 8px; letter-spacing: 2px; }
+  .rank-value { font-family: 'Press Start 2P', monospace; font-size: clamp(22px,7vw,36px); animation: rankGlow 1.5s ease-in-out infinite alternate; }
+  @keyframes rankGlow { from{text-shadow:0 0 10px currentColor} to{text-shadow:0 0 30px currentColor,0 0 50px currentColor} }
+  .rank-name { font-size: 13px; margin-top: 6px; font-weight: 700; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .stat-box { background: var(--panel2); border: 1px solid var(--border); border-radius: 4px; padding: 12px; text-align: center; }
+  .stat-val { font-family: 'Press Start 2P', monospace; font-size: 18px; color: var(--accent); display: block; }
+  .stat-label { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+  .missed-list { background: var(--panel2); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; max-height: 200px; overflow-y: auto; }
+  .missed-list-title { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--accent2); margin-bottom: 8px; }
+  .missed-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px; gap: 8px; }
   .missed-item:last-child { border-bottom: none; }
   .missed-q { color: var(--text-dim); flex: 1; }
   .missed-a { color: var(--correct); font-weight: 700; }
 
-  /* Floating damage numbers */
-  .damage-num {
-    position: fixed;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 20px;
-    font-weight: 700;
-    pointer-events: none;
-    z-index: 998;
-    animation: floatUp 0.9s ease-out forwards;
-  }
-  @keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-60px) scale(1.4); }
-  }
+  /* BUTTONS */
+  .btn-primary { display:block;width:100%;background:var(--accent);color:#000;border:none;padding:14px 20px;font-family:'Press Start 2P',monospace;font-size:10px;cursor:pointer;border-radius:4px;margin-bottom:10px;letter-spacing:1px;transition:all 0.15s;box-shadow:0 4px 0 rgba(0,180,140,0.5); }
+  .btn-primary:hover { transform:translateY(-2px);box-shadow:0 6px 0 rgba(0,180,140,0.5); }
+  .btn-primary:active { transform:translateY(2px);box-shadow:0 2px 0 rgba(0,180,140,0.5); }
+  .btn-secondary { display:block;width:100%;background:transparent;color:var(--text-dim);border:2px solid var(--border);padding:12px 20px;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;border-radius:4px;margin-bottom:10px;transition:all 0.15s; }
+  .btn-secondary:hover { border-color:var(--text-dim);color:var(--text); }
+  .btn-reset { display:block;width:100%;background:transparent;color:var(--accent2);border:2px solid var(--accent2);padding:12px 20px;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;border-radius:4px;margin-top:6px;transition:all 0.15s; }
+  .btn-reset:hover { background:rgba(255,68,136,0.08); }
 
-  /* Streak counter */
-  .streak-display {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    color: var(--accent3);
-    text-align: center;
-    min-height: 14px;
-    margin-bottom: 8px;
-    animation: streakPop 0.3s ease-out;
-  }
-  @keyframes streakPop {
-    0% { transform: scale(1.4); }
-    100% { transform: scale(1); }
-  }
+  /* FX */
+  .damage-flash { position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:999;opacity:0;transition:opacity 0.1s; }
+  .damage-flash.player-hit { background:rgba(255,68,136,0.22); }
+  .damage-flash.enemy-hit { background:rgba(0,255,204,0.12); }
+  .damage-flash.show { opacity:1; }
+  .damage-num { position:fixed;font-family:'Press Start 2P',monospace;font-size:18px;pointer-events:none;z-index:998;animation:floatUp 0.9s ease-out forwards; }
+  @keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-55px) scale(1.3)} }
 </style>
 </head>
 <body>
-
 <div class="damage-flash" id="damageFlash"></div>
-
 <div class="container">
-
-  <!-- TITLE -->
   <div class="title-block">
     <div class="title-jp">⚗️ 化学バトル！</div>
     <div class="title-en">CHEM BATTLE!</div>
   </div>
 
-  <!-- MENU SCREEN -->
+  <!-- MENU -->
   <div class="screen active" id="menuScreen">
-    <div class="villain-intro">
-      <span class="villain-sprite" id="menuVillain">🧪</span>
-      <div class="villain-name">Dr. バリウム / DR. BARIUM</div>
-      <div class="villain-taunt" id="menuTaunt">フハハ！化学式なんか覚えられるわけがない！<br><span style="color:var(--text-dim);font-size:11px;">Mwahaha! You can never learn chemistry!</span></div>
-    </div>
-
+    <span class="villain-sprite">🧪</span>
+    <div class="villain-name">Dr. バリウム / DR. BARIUM</div>
+    <div class="villain-taunt" id="menuTaunt">フハハ！化学式なんか覚えられるわけがない！<br><span style="color:var(--text-dim);font-size:11px">Mwahaha! You can never learn chemistry!</span></div>
     <div class="menu-label">⚔️ BATTLE MODE SELECT ⚔️</div>
-
     <button class="category-btn" onclick="startBattle('elements')">
       <span class="btn-jp">⚗️ 元素記号バトル</span>
-      <span class="btn-en">Element Symbols (原子番号 1〜20 + extra)</span>
+      <span class="btn-en">Element Symbols — atoms 1〜20 + extras</span>
     </button>
     <button class="category-btn" onclick="startBattle('formulas')">
       <span class="btn-jp">🧪 化学式バトル</span>
-      <span class="btn-en">Chemical Formulas (gases, acids, salts...)</span>
+      <span class="btn-en">Chemical Formulas — gases, acids, salts...</span>
     </button>
     <button class="category-btn boss" onclick="startBattle('boss')">
       <span class="btn-jp">💀 ボス戦（全問混合）</span>
@@ -676,15 +221,12 @@
     </button>
   </div>
 
-  <!-- BATTLE SCREEN -->
+  <!-- BATTLE -->
   <div class="screen" id="battleScreen">
-    <!-- HP Bars -->
     <div class="battle-header">
       <div class="combatant">
         <div class="combatant-name player">⚗️ 化学戦士</div>
-        <div class="hp-bar-wrap">
-          <div class="hp-bar player" id="playerHpBar" style="width:100%"></div>
-        </div>
+        <div class="hp-bar-wrap"><div class="hp-bar player" id="playerHpBar" style="width:100%"></div></div>
         <div class="hp-text" id="playerHpText">HP: 100/100</div>
       </div>
       <div class="vs-block">
@@ -693,604 +235,358 @@
       </div>
       <div class="combatant">
         <div class="combatant-name enemy">🧪 Dr. バリウム</div>
-        <div class="hp-bar-wrap">
-          <div class="hp-bar enemy" id="enemyHpBar" style="width:100%"></div>
-        </div>
+        <div class="hp-bar-wrap"><div class="hp-bar enemy" id="enemyHpBar" style="width:100%"></div></div>
         <div class="hp-text enemy" id="enemyHpText">HP: 100/100</div>
       </div>
     </div>
-
-    <!-- Sprites -->
     <div class="battle-sprites">
       <div class="sprite" id="playerSprite">🧑‍🔬</div>
       <div class="sprite enemy" id="enemySprite">🧪</div>
     </div>
-
-    <!-- Streak -->
     <div class="streak-display" id="streakDisplay"></div>
-
-    <!-- Battle Message -->
-    <div class="battle-msg" id="battleMsg">
-      <span id="battleMsgText">バトル開始！</span><br>
-      <span class="msg-en" id="battleMsgEn">Battle Start!</span>
-    </div>
-
-    <!-- Progress -->
+    <div class="battle-msg" id="battleMsg">バトル開始！</div>
     <div class="progress-label" id="progressLabel">1 / 10</div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar" id="progressBar" style="width:0%"></div>
-    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
 
-    <!-- Question -->
-    <div class="question-block" id="questionBlock">
+    <div class="question-block">
       <div class="question-label">❓ QUESTION / 問題</div>
       <div class="question-main" id="questionMain">-</div>
-      <div class="question-sub" id="questionSub">-</div>
-      <div class="question-hint" id="questionHint">-</div>
+      <div class="question-category" id="questionCategory"></div>
+      <div class="hint-row">
+        <button class="hint-btn" id="hintBtn" onclick="showHint()">👁️ ヒント / Hint</button>
+        <span class="hint-text" id="hintText"></span>
+        <span class="hint-penalty" id="hintPenalty"></span>
+      </div>
     </div>
 
-    <!-- Choices -->
     <div class="choices" id="choicesGrid"></div>
-
     <button class="btn-reset" onclick="goMenu()">🏃 逃げる / FLEE</button>
   </div>
 
-  <!-- RESULT SCREEN -->
+  <!-- RESULT -->
   <div class="screen" id="resultScreen">
     <span class="result-emoji" id="resultEmoji">🏆</span>
     <div class="result-title" id="resultTitle">-</div>
     <div class="result-subtitle" id="resultSubtitle">-</div>
-
     <div class="rank-block">
       <div class="rank-label">★ RANK / ランク ★</div>
       <div class="rank-value" id="rankValue">S</div>
       <div class="rank-name" id="rankName">-</div>
     </div>
-
     <div class="stats-grid">
-      <div class="stat-box">
-        <span class="stat-val" id="statCorrect">0</span>
-        <div class="stat-label">正解 / Correct</div>
-      </div>
-      <div class="stat-box">
-        <span class="stat-val" id="statWrong" style="color:var(--accent2)">0</span>
-        <div class="stat-label">不正解 / Wrong</div>
-      </div>
-      <div class="stat-box">
-        <span class="stat-val" id="statScore">0</span>
-        <div class="stat-label">スコア / Score</div>
-      </div>
-      <div class="stat-box">
-        <span class="stat-val" id="statStreak" style="color:var(--accent3)">0</span>
-        <div class="stat-label">最大連続正解 / Best Streak</div>
-      </div>
+      <div class="stat-box"><span class="stat-val" id="statCorrect">0</span><div class="stat-label">正解 / Correct</div></div>
+      <div class="stat-box"><span class="stat-val" id="statWrong" style="color:var(--accent2)">0</span><div class="stat-label">不正解 / Wrong</div></div>
+      <div class="stat-box"><span class="stat-val" id="statScore">0</span><div class="stat-label">スコア / Score</div></div>
+      <div class="stat-box"><span class="stat-val" id="statStreak" style="color:var(--accent3)">0</span><div class="stat-label">最大連続 / Best Streak</div></div>
     </div>
-
     <div id="missedSection" style="display:none">
       <div class="missed-list">
         <div class="missed-list-title">❌ 間違えた問題 / Missed Questions</div>
         <div id="missedItems"></div>
       </div>
     </div>
-
     <button class="btn-primary" id="retryBtn" onclick="retryBattle()">🔄 もう一度！/ RETRY!</button>
     <button class="btn-secondary" onclick="goMenu()">🏠 カテゴリ選択へ / BACK TO MENU</button>
     <button class="btn-reset" onclick="fullReset()">⚡ 全リセット / FULL RESET</button>
   </div>
-
 </div>
 
 <script>
-// ===== DATA =====
+// ===== DATA — verified against uploaded sheet =====
 const elementsData = [
-  { jp: '水素', en: 'Hydrogen', symbol: 'H', num: 1 },
-  { jp: 'ヘリウム', en: 'Helium', symbol: 'He', num: 2 },
-  { jp: 'リチウム', en: 'Lithium', symbol: 'Li', num: 3 },
-  { jp: 'ベリリウム', en: 'Beryllium', symbol: 'Be', num: 4 },
-  { jp: 'ホウ素', en: 'Boron', symbol: 'B', num: 5 },
-  { jp: '炭素', en: 'Carbon', symbol: 'C', num: 6 },
-  { jp: '窒素', en: 'Nitrogen', symbol: 'N', num: 7 },
-  { jp: '酸素', en: 'Oxygen', symbol: 'O', num: 8 },
-  { jp: 'フッ素', en: 'Fluorine', symbol: 'F', num: 9 },
-  { jp: 'ネオン', en: 'Neon', symbol: 'Ne', num: 10 },
-  { jp: 'ナトリウム', en: 'Sodium', symbol: 'Na', num: 11 },
-  { jp: 'マグネシウム', en: 'Magnesium', symbol: 'Mg', num: 12 },
-  { jp: 'アルミニウム', en: 'Aluminium', symbol: 'Al', num: 13 },
-  { jp: 'ケイ素', en: 'Silicon', symbol: 'Si', num: 14 },
-  { jp: 'リン', en: 'Phosphorus', symbol: 'P', num: 15 },
-  { jp: '硫黄', en: 'Sulfur', symbol: 'S', num: 16 },
-  { jp: '塩素', en: 'Chlorine', symbol: 'Cl', num: 17 },
-  { jp: 'アルゴン', en: 'Argon', symbol: 'Ar', num: 18 },
-  { jp: 'カリウム', en: 'Potassium', symbol: 'K', num: 19 },
-  { jp: 'カルシウム', en: 'Calcium', symbol: 'Ca', num: 20 },
-  { jp: '亜鉛', en: 'Zinc', symbol: 'Zn', num: 30 },
-  { jp: '鉄', en: 'Iron', symbol: 'Fe', num: 26 },
-  { jp: 'バリウム', en: 'Barium', symbol: 'Ba', num: 56 },
-  { jp: '金', en: 'Gold', symbol: 'Au', num: 79 },
-  { jp: '銀', en: 'Silver', symbol: 'Ag', num: 47 },
-  { jp: '銅', en: 'Copper', symbol: 'Cu', num: 29 },
+  {jp:'水素',      en:'Hydrogen',   symbol:'H',  num:1 },
+  {jp:'ヘリウム',  en:'Helium',     symbol:'He', num:2 },
+  {jp:'リチウム',  en:'Lithium',    symbol:'Li', num:3 },
+  {jp:'ベリリウム',en:'Beryllium',  symbol:'Be', num:4 },
+  {jp:'ホウ素',    en:'Boron',      symbol:'B',  num:5 },
+  {jp:'炭素',      en:'Carbon',     symbol:'C',  num:6 },
+  {jp:'窒素',      en:'Nitrogen',   symbol:'N',  num:7 },
+  {jp:'酸素',      en:'Oxygen',     symbol:'O',  num:8 },
+  {jp:'フッ素',    en:'Fluorine',   symbol:'F',  num:9 },
+  {jp:'ネオン',    en:'Neon',       symbol:'Ne', num:10},
+  {jp:'ナトリウム',en:'Sodium',     symbol:'Na', num:11},
+  {jp:'マグネシウム',en:'Magnesium',symbol:'Mg', num:12},
+  {jp:'アルミニウム',en:'Aluminium',symbol:'Al', num:13},
+  {jp:'ケイ素',    en:'Silicon',    symbol:'Si', num:14},
+  {jp:'リン',      en:'Phosphorus', symbol:'P',  num:15},
+  {jp:'硫黄',      en:'Sulfur',     symbol:'S',  num:16},
+  {jp:'塩素',      en:'Chlorine',   symbol:'Cl', num:17},
+  {jp:'アルゴン',  en:'Argon',      symbol:'Ar', num:18},
+  {jp:'カリウム',  en:'Potassium',  symbol:'K',  num:19},
+  {jp:'カルシウム',en:'Calcium',    symbol:'Ca', num:20},
+  // Extra elements from sheet
+  {jp:'亜鉛',   en:'Zinc',   symbol:'Zn', num:30},
+  {jp:'鉄',     en:'Iron',   symbol:'Fe', num:26},
+  {jp:'バリウム',en:'Barium', symbol:'Ba', num:56},
+  {jp:'金',     en:'Gold',   symbol:'Au', num:79},
+  {jp:'銀',     en:'Silver', symbol:'Ag', num:47},
+  {jp:'銅',     en:'Copper', symbol:'Cu', num:29},
 ];
 
 const formulasData = [
   // 気体 Gases
-  { jp: '水素', en: 'Hydrogen', formula: 'H₂', category: '気体/Gas' },
-  { jp: '窒素', en: 'Nitrogen', formula: 'N₂', category: '気体/Gas' },
-  { jp: '酸素', en: 'Oxygen', formula: 'O₂', category: '気体/Gas' },
-  { jp: '塩素', en: 'Chlorine', formula: 'Cl₂', category: '気体/Gas' },
-  { jp: '二酸化炭素', en: 'Carbon Dioxide', formula: 'CO₂', category: '気体/Gas' },
-  { jp: 'アンモニア', en: 'Ammonia', formula: 'NH₃', category: '気体/Gas' },
-  { jp: 'メタン', en: 'Methane', formula: 'CH₄', category: '気体/Gas' },
-  { jp: 'プロパン', en: 'Propane', formula: 'C₃H₈', category: '気体/Gas' },
+  {jp:'水素',      en:'Hydrogen gas',      formula:'H₂',    cat:'気体'},
+  {jp:'窒素',      en:'Nitrogen gas',      formula:'N₂',    cat:'気体'},
+  {jp:'酸素',      en:'Oxygen gas',        formula:'O₂',    cat:'気体'},
+  {jp:'塩素',      en:'Chlorine gas',      formula:'Cl₂',   cat:'気体'},
+  {jp:'二酸化炭素', en:'Carbon dioxide',   formula:'CO₂',   cat:'気体'},
+  {jp:'アンモニア', en:'Ammonia',          formula:'NH₃',   cat:'気体'},
+  {jp:'メタン',    en:'Methane',           formula:'CH₄',   cat:'気体'},
+  {jp:'プロパン',  en:'Propane',           formula:'C₃H₈',  cat:'気体'},
   // その他 Other
-  { jp: '水', en: 'Water', formula: 'H₂O', category: 'その他/Other' },
-  { jp: '過酸化水素水', en: 'Hydrogen Peroxide', formula: 'H₂O₂', category: 'その他/Other' },
-  { jp: '硝酸', en: 'Nitric Acid', formula: 'HNO₃', category: 'その他/Other' },
-  { jp: 'メタノール', en: 'Methanol', formula: 'CH₄O', category: 'その他/Other' },
-  { jp: 'エタノール', en: 'Ethanol', formula: 'C₂H₆O', category: 'その他/Other' },
+  {jp:'水',            en:'Water',              formula:'H₂O',   cat:'その他'},
+  {jp:'過酸化水素水',  en:'Hydrogen peroxide',  formula:'H₂O₂',  cat:'その他'},
+  {jp:'硝酸',          en:'Nitric acid',         formula:'HNO₃',  cat:'その他'},
+  {jp:'メタノール',    en:'Methanol',            formula:'CH₄O',  cat:'その他'},
+  {jp:'エタノール',    en:'Ethanol',             formula:'C₂H₆O', cat:'その他'},
   // 水酸化 Hydroxides
-  { jp: '水酸化ナトリウム', en: 'Sodium Hydroxide', formula: 'NaOH', category: '水酸化/Hydroxide' },
-  { jp: '水酸化カリウム', en: 'Potassium Hydroxide', formula: 'KOH', category: '水酸化/Hydroxide' },
-  { jp: '水酸化カルシウム', en: 'Calcium Hydroxide', formula: 'Ca(OH)₂', category: '水酸化/Hydroxide' },
-  { jp: '水酸化バリウム', en: 'Barium Hydroxide', formula: 'Ba(OH)₂', category: '水酸化/Hydroxide' },
+  {jp:'水酸化ナトリウム', en:'Sodium hydroxide',    formula:'NaOH',    cat:'水酸化'},
+  {jp:'水酸化カリウム',   en:'Potassium hydroxide', formula:'KOH',     cat:'水酸化'},
+  {jp:'水酸化カルシウム', en:'Calcium hydroxide',   formula:'Ca(OH)₂', cat:'水酸化'},
+  {jp:'水酸化バリウム',   en:'Barium hydroxide',    formula:'Ba(OH)₂', cat:'水酸化'},
   // 酸化 Oxides
-  { jp: '酸化銅', en: 'Copper Oxide', formula: 'CuO', category: '酸化/Oxide' },
-  { jp: '酸化銀', en: 'Silver Oxide', formula: 'Ag₂O', category: '酸化/Oxide' },
-  { jp: '酸化マグネシウム', en: 'Magnesium Oxide', formula: 'MgO', category: '酸化/Oxide' },
-  { jp: '酸化カルシウム', en: 'Calcium Oxide', formula: 'CaO', category: '酸化/Oxide' },
-  { jp: '二酸化硫黄', en: 'Sulfur Dioxide', formula: 'SO₂', category: '酸化/Oxide' },
+  {jp:'酸化銅',           en:'Copper(II) oxide',    formula:'CuO',   cat:'酸化'},
+  {jp:'酸化銀',           en:'Silver oxide',         formula:'Ag₂O',  cat:'酸化'},
+  {jp:'酸化マグネシウム', en:'Magnesium oxide',     formula:'MgO',   cat:'酸化'},
+  {jp:'酸化カルシウム',   en:'Calcium oxide',        formula:'CaO',   cat:'酸化'},
+  {jp:'二酸化硫黄',       en:'Sulfur dioxide',        formula:'SO₂',   cat:'酸化'},
   // 塩化 Chlorides
-  { jp: '塩化水素（塩酸）', en: 'Hydrochloric Acid', formula: 'HCl', category: '塩化/Chloride' },
-  { jp: '塩化ナトリウム', en: 'Sodium Chloride', formula: 'NaCl', category: '塩化/Chloride' },
-  { jp: '塩化銅', en: 'Copper Chloride', formula: 'CuCl₂', category: '塩化/Chloride' },
-  { jp: '塩化鉄', en: 'Iron Chloride', formula: 'FeCl₂', category: '塩化/Chloride' },
-  { jp: '塩化アンモニウム', en: 'Ammonium Chloride', formula: 'NH₄Cl', category: '塩化/Chloride' },
-  { jp: '塩化マグネシウム', en: 'Magnesium Chloride', formula: 'MgCl₂', category: '塩化/Chloride' },
-  { jp: '塩化カルシウム', en: 'Calcium Chloride', formula: 'CaCl₂', category: '塩化/Chloride' },
-  { jp: '塩化バリウム', en: 'Barium Chloride', formula: 'BaCl₂', category: '塩化/Chloride' },
+  {jp:'塩化水素（塩酸）', en:'Hydrogen chloride / Hydrochloric acid', formula:'HCl',   cat:'塩化'},
+  {jp:'塩化ナトリウム',   en:'Sodium chloride (table salt)',          formula:'NaCl',  cat:'塩化'},
+  {jp:'塩化銅',           en:'Copper(II) chloride',                   formula:'CuCl₂', cat:'塩化'},
+  {jp:'塩化鉄',           en:'Iron(II) chloride',                     formula:'FeCl₂', cat:'塩化'},
+  {jp:'塩化アンモニウム', en:'Ammonium chloride',                     formula:'NH₄Cl', cat:'塩化'},
+  {jp:'塩化マグネシウム', en:'Magnesium chloride',                    formula:'MgCl₂', cat:'塩化'},
+  {jp:'塩化カルシウム',   en:'Calcium chloride',                      formula:'CaCl₂', cat:'塩化'},
+  {jp:'塩化バリウム',     en:'Barium chloride',                       formula:'BaCl₂', cat:'塩化'},
   // 炭酸 Carbonates
-  { jp: '炭酸', en: 'Carbonic Acid', formula: 'H₂CO₃', category: '炭酸/Carbonate' },
-  { jp: '炭酸水素ナトリウム', en: 'Sodium Bicarbonate', formula: 'NaHCO₃', category: '炭酸/Carbonate' },
-  { jp: '炭酸ナトリウム', en: 'Sodium Carbonate', formula: 'Na₂CO₃', category: '炭酸/Carbonate' },
+  {jp:'炭酸',             en:'Carbonic acid',                         formula:'H₂CO₃',  cat:'炭酸'},
+  {jp:'炭酸水素ナトリウム',en:'Sodium bicarbonate (baking soda)',     formula:'NaHCO₃', cat:'炭酸'},
+  {jp:'炭酸ナトリウム',   en:'Sodium carbonate',                      formula:'Na₂CO₃', cat:'炭酸'},
   // 硫酸 Sulfates
-  { jp: '硫酸', en: 'Sulfuric Acid', formula: 'H₂SO₄', category: '硫酸/Sulfate' },
-  { jp: '硫酸銅', en: 'Copper Sulfate', formula: 'CuSO₄', category: '硫酸/Sulfate' },
-  { jp: '硫酸カルシウム', en: 'Calcium Sulfate', formula: 'CaSO₄', category: '硫酸/Sulfate' },
-  { jp: '硫酸バリウム', en: 'Barium Sulfate', formula: 'BaSO₄', category: '硫酸/Sulfate' },
+  {jp:'硫酸',         en:'Sulfuric acid',       formula:'H₂SO₄', cat:'硫酸'},
+  {jp:'硫酸銅',       en:'Copper(II) sulfate',  formula:'CuSO₄', cat:'硫酸'},
+  {jp:'硫酸カルシウム',en:'Calcium sulfate',    formula:'CaSO₄', cat:'硫酸'},
+  {jp:'硫酸バリウム', en:'Barium sulfate',      formula:'BaSO₄', cat:'硫酸'},
   // 硫化 Sulfides
-  { jp: '硫化水素', en: 'Hydrogen Sulfide', formula: 'H₂S', category: '硫化/Sulfide' },
-  { jp: '硫化銅', en: 'Copper Sulfide', formula: 'CuS', category: '硫化/Sulfide' },
-  { jp: '硫化鉄', en: 'Iron Sulfide', formula: 'FeS', category: '硫化/Sulfide' },
+  {jp:'硫化水素', en:'Hydrogen sulfide',   formula:'H₂S', cat:'硫化'},
+  {jp:'硫化銅',   en:'Copper(II) sulfide', formula:'CuS', cat:'硫化'},
+  {jp:'硫化鉄',   en:'Iron(II) sulfide',   formula:'FeS', cat:'硫化'},
 ];
 
-const villainTaunts = [
-  ['フハハ！化学式なんか覚えられるわけがない！', "Mwahaha! You can never learn chemistry!"],
-  ['この問題、正解できると思うな！', "Don't even think you can answer this!"],
-  ['元素記号？フッ、子供の遊びよ！', "Element symbols? Pfft, child's play!"],
-  ['私に勝てる学生などおらん！', "No student can defeat me!"],
+// ===== STATE =====
+let state = {};
+const MAX_HP=100, P_DMG=20, E_DMG=15, HINT_COST=5, Q_COUNT=10;
+
+const taunts = [
+  'フハハ！この問題、正解できると思うな！',
+  'くだらん！さっさと答えてみろ！',
+  '化学式？子供の遊びよ！',
+  '私に勝てる学生などおらん！',
+  'うぬぬ…次の問題だ！',
+  'その答えは違う！諦めろ！',
 ];
+const correctMsgs = ['会心の一撃！⚡','完璧だ！🔥','すごい！✨','天才か！⚡','化学マスター！🏆'];
+const wrongMsgs   = ['Dr.バリウムの反撃！💥','甘い！違う！','フハハ！ダメージ！','もっと勉強しろ！'];
 
-const correctMsgs = [
-  ['会心の一撃！⚡', 'CRITICAL HIT! ⚡'],
-  ['完璧だ！🔥', 'PERFECT! 🔥'],
-  ['すごい！その通り！✨', 'Amazing! That\'s right! ✨'],
-  ['天才か！⚡', 'Are you a genius?! ⚡'],
-  ['化学マスター！🏆', 'Chemistry Master! 🏆'],
-];
-
-const wrongMsgs = [
-  ['Dr.バリウムの反撃！💥', 'Dr. Barium strikes back! 💥'],
-  ['甘い！その答えは違う！', 'Too weak! Wrong answer!'],
-  ['フハハ！ダメージを受けた！', 'Mwahaha! You took damage!'],
-  ['もっと勉強しろ！', 'Study harder!'],
-];
-
-const streakMsgs = [
-  [3, '🔥 3連続正解！/ 3 in a row!'],
-  [5, '⚡ 5連続！UNSTOPPABLE!'],
-  [8, '💥 8連続！LEGENDARY!'],
-  [10, '🌟 10連続！CHEMISTRY GOD!'],
-];
-
-// ===== GAME STATE =====
-let state = {
-  category: 'elements',
-  questions: [],
-  current: 0,
-  playerHp: 100,
-  enemyHp: 100,
-  score: 0,
-  correct: 0,
-  wrong: 0,
-  streak: 0,
-  bestStreak: 0,
-  missed: [],
-  answered: false,
-};
-
-const MAX_HP = 100;
-const PLAYER_DAMAGE = 20;
-const ENEMY_DAMAGE = 15;
-const QUESTIONS_PER_BATTLE = 10;
-
-// ===== HELPERS =====
 function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
-
-function pickRandom(arr, n) {
-  return shuffle(arr).slice(0, n);
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function flashDmg(type){const el=document.getElementById('damageFlash');el.className=`damage-flash ${type} show`;setTimeout(()=>el.classList.remove('show'),180);}
+function spawnNum(text,color,x){const el=document.createElement('div');el.className='damage-num';el.style.cssText=`color:${color};left:${x}%;top:35%`;el.textContent=text;document.body.appendChild(el);setTimeout(()=>el.remove(),900);}
+function updateHP(){
+  const ph=Math.max(0,state.playerHp),eh=Math.max(0,state.enemyHp);
+  document.getElementById('playerHpBar').style.width=ph+'%';
+  document.getElementById('enemyHpBar').style.width=eh+'%';
+  document.getElementById('playerHpText').textContent=`HP: ${ph}/${MAX_HP}`;
+  document.getElementById('enemyHpText').textContent=`HP: ${eh}/${MAX_HP}`;
+  document.getElementById('scoreDisplay').textContent=state.score+'pt';
 }
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function flashDamage(type) {
-  const el = document.getElementById('damageFlash');
-  el.className = `damage-flash ${type} show`;
-  setTimeout(() => el.classList.remove('show'), 200);
-}
-
-function spawnDamageNum(text, color, xPct) {
-  const el = document.createElement('div');
-  el.className = 'damage-num';
-  el.style.color = color;
-  el.style.left = `${xPct}%`;
-  el.style.top = '35%';
-  el.textContent = text;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 900);
-}
-
-function updateHpBars() {
-  const ph = Math.max(0, state.playerHp);
-  const eh = Math.max(0, state.enemyHp);
-  document.getElementById('playerHpBar').style.width = `${ph}%`;
-  document.getElementById('enemyHpBar').style.width = `${eh}%`;
-  document.getElementById('playerHpText').textContent = `HP: ${ph}/${MAX_HP}`;
-  document.getElementById('enemyHpText').textContent = `HP: ${eh}/${MAX_HP}`;
-  document.getElementById('scoreDisplay').textContent = `${state.score}pt`;
-}
-
-// ===== QUESTION BUILDERS =====
-function buildElementQuestions() {
-  const pool = shuffle(elementsData).slice(0, QUESTIONS_PER_BATTLE);
-  return pool.map(el => {
-    // Alternate: name→symbol or symbol→name
-    const mode = Math.random() > 0.5 ? 'nameToSymbol' : 'symbolToName';
-    const allSymbols = elementsData.map(e => e.symbol);
-    const allNames = elementsData.map(e => ({ jp: e.jp, en: e.en }));
-
-    if (mode === 'nameToSymbol') {
-      const wrongOpts = shuffle(allSymbols.filter(s => s !== el.symbol)).slice(0, 3);
-      const opts = shuffle([el.symbol, ...wrongOpts]);
-      return {
-        questionJp: `${el.jp}（原子番号 ${el.num}）`,
-        questionEn: `${el.en} (Atomic No. ${el.num})`,
-        hint: '元素記号は？/ What is the element symbol?',
-        answer: el.symbol,
-        options: opts.map(s => ({ main: s, sub: elementsData.find(e => e.symbol === s)?.jp || '' })),
-        correct: el,
-        type: 'element',
-      };
+function buildElementQs(){
+  return shuffle(elementsData).slice(0,Q_COUNT).map(el=>{
+    const nameToSym = Math.random()>0.5;
+    if(nameToSym){
+      const wrongs=shuffle(elementsData.filter(e=>e.symbol!==el.symbol)).slice(0,3).map(e=>e.symbol);
+      return {qMain:`${el.jp}（原子番号 ${el.num}）`, hint:`English: ${el.en}`, cat:'元素記号は？/ What is the symbol?', answer:el.symbol, opts:shuffle([el.symbol,...wrongs]), label:el.jp};
     } else {
-      const wrongOpts = shuffle(allNames.filter(n => n.jp !== el.jp)).slice(0, 3);
-      const opts = shuffle([{ jp: el.jp, en: el.en }, ...wrongOpts]);
-      return {
-        questionJp: `元素記号「${el.symbol}」`,
-        questionEn: `Element Symbol "${el.symbol}"`,
-        hint: '元素の名前は？/ What is the element name?',
-        answer: el.jp,
-        options: opts.map(n => ({ main: n.jp, sub: n.en })),
-        correct: el,
-        type: 'element',
-      };
+      const wrongs=shuffle(elementsData.filter(e=>e.jp!==el.jp)).slice(0,3).map(e=>e.jp);
+      return {qMain:`元素記号「${el.symbol}」（原子番号 ${el.num}）`, hint:`English: ${el.en}`, cat:'元素名は？/ What element is this?', answer:el.jp, opts:shuffle([el.jp,...wrongs]), label:`記号 ${el.symbol}`};
     }
   });
 }
 
-function buildFormulaQuestions() {
-  const pool = shuffle(formulasData).slice(0, QUESTIONS_PER_BATTLE);
-  return pool.map(f => {
-    const mode = Math.random() > 0.4 ? 'nameToFormula' : 'formulaToName';
-    const allFormulas = formulasData.map(d => d.formula);
-    const allNames = formulasData.map(d => ({ jp: d.jp, en: d.en }));
-
-    if (mode === 'nameToFormula') {
-      const wrongOpts = shuffle(allFormulas.filter(s => s !== f.formula)).slice(0, 3);
-      const opts = shuffle([f.formula, ...wrongOpts]);
-      return {
-        questionJp: f.jp,
-        questionEn: f.en,
-        hint: `【${f.category}】化学式は？/ What is the formula?`,
-        answer: f.formula,
-        options: opts.map(s => ({ main: s, sub: formulasData.find(d => d.formula === s)?.jp || '' })),
-        correct: f,
-        type: 'formula',
-      };
+function buildFormulaQs(){
+  return shuffle(formulasData).slice(0,Q_COUNT).map(f=>{
+    const nameToForm = Math.random()>0.4;
+    if(nameToForm){
+      const wrongs=shuffle(formulasData.filter(d=>d.formula!==f.formula)).slice(0,3).map(d=>d.formula);
+      return {qMain:f.jp, hint:`English: ${f.en}`, cat:`【${f.cat}】化学式は？/ Formula?`, answer:f.formula, opts:shuffle([f.formula,...wrongs]), label:f.jp};
     } else {
-      const wrongOpts = shuffle(allNames.filter(n => n.jp !== f.jp)).slice(0, 3);
-      const opts = shuffle([{ jp: f.jp, en: f.en }, ...wrongOpts]);
-      return {
-        questionJp: `化学式「${f.formula}」`,
-        questionEn: `Formula "${f.formula}"`,
-        hint: `【${f.category}】物質の名前は？/ What is this substance?`,
-        answer: f.jp,
-        options: opts.map(n => ({ main: n.jp, sub: n.en })),
-        correct: f,
-        type: 'formula',
-      };
+      const wrongs=shuffle(formulasData.filter(d=>d.jp!==f.jp)).slice(0,3).map(d=>d.jp);
+      return {qMain:`化学式「${f.formula}」`, hint:`English: ${f.en}`, cat:`【${f.cat}】物質名は？/ Name?`, answer:f.jp, opts:shuffle([f.jp,...wrongs]), label:`化学式 ${f.formula}`};
     }
   });
 }
 
-// ===== GAME FLOW =====
-function startBattle(category) {
-  state.category = category;
-  state.playerHp = MAX_HP;
-  state.enemyHp = MAX_HP;
-  state.score = 0;
-  state.correct = 0;
-  state.wrong = 0;
-  state.streak = 0;
-  state.bestStreak = 0;
-  state.missed = [];
-  state.current = 0;
-  state.answered = false;
-
-  if (category === 'elements') {
-    state.questions = buildElementQuestions();
-  } else if (category === 'formulas') {
-    state.questions = buildFormulaQuestions();
-  } else {
-    // boss: mix
-    const eq = buildElementQuestions().slice(0, 5);
-    const fq = buildFormulaQuestions().slice(0, 5);
-    state.questions = shuffle([...eq, ...fq]);
-  }
-
+function startBattle(cat){
+  state={category:cat,questions:[],current:0,playerHp:MAX_HP,enemyHp:MAX_HP,score:0,correct:0,wrong:0,streak:0,bestStreak:0,missed:[],answered:false,hintUsed:false};
+  if(cat==='elements') state.questions=buildElementQs();
+  else if(cat==='formulas') state.questions=buildFormulaQs();
+  else state.questions=shuffle([...buildElementQs().slice(0,5),...buildFormulaQs().slice(0,5)]);
   showScreen('battleScreen');
-  updateHpBars();
-  renderQuestion();
+  updateHP();
+  renderQ();
 }
 
-function renderQuestion() {
-  const q = state.questions[state.current];
-  if (!q) { endBattle(); return; }
+function renderQ(){
+  const q=state.questions[state.current];
+  if(!q){endBattle();return;}
+  state.answered=false;
+  state.hintUsed=false;
 
-  state.answered = false;
+  const pct=(state.current/state.questions.length)*100;
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('progressLabel').textContent=`${state.current+1} / ${state.questions.length}`;
+  document.getElementById('battleMsg').textContent=`Dr.バリウム：「${taunts[Math.floor(Math.random()*taunts.length)]}」`;
+  document.getElementById('questionMain').textContent=q.qMain;
+  document.getElementById('questionCategory').textContent=q.cat;
 
-  // Progress
-  const pct = (state.current / state.questions.length) * 100;
-  document.getElementById('progressBar').style.width = `${pct}%`;
-  document.getElementById('progressLabel').textContent = `${state.current + 1} / ${state.questions.length}`;
+  // reset hint
+  document.getElementById('hintBtn').className='hint-btn';
+  document.getElementById('hintBtn').textContent='👁️ ヒント / Hint';
+  document.getElementById('hintText').className='hint-text';
+  document.getElementById('hintText').textContent='';
+  document.getElementById('hintPenalty').className='hint-penalty';
+  document.getElementById('hintPenalty').textContent='';
 
-  // Message — villain attacks with question
-  const taunt = villainTaunts[Math.floor(Math.random() * villainTaunts.length)];
-  document.getElementById('battleMsgText').textContent = `Dr.バリウムが問題を出した！${taunt[0]}`;
-  document.getElementById('battleMsgEn').textContent = taunt[1];
+  // streak
+  const sk=document.getElementById('streakDisplay');
+  sk.textContent=state.streak>=3?`🔥 ${state.streak}連続正解！`:'';
 
-  // Question
-  document.getElementById('questionMain').textContent = q.questionJp;
-  document.getElementById('questionSub').textContent = q.questionEn;
-  document.getElementById('questionHint').textContent = q.hint;
-
-  // Streak
-  updateStreakDisplay();
-
-  // Choices
-  const grid = document.getElementById('choicesGrid');
-  grid.innerHTML = '';
-  q.options.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'choice-btn';
-    btn.innerHTML = `${opt.main}<span class="choice-sub">${opt.sub}</span>`;
-    btn.onclick = () => handleAnswer(opt.main, q, btn);
+  // choices
+  const grid=document.getElementById('choicesGrid');
+  grid.innerHTML='';
+  q.opts.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.textContent=opt;
+    btn.onclick=()=>handleAnswer(opt,q,btn);
     grid.appendChild(btn);
   });
 }
 
-function handleAnswer(chosen, q, btn) {
-  if (state.answered) return;
-  state.answered = true;
+function showHint(){
+  if(state.hintUsed||state.answered) return;
+  state.hintUsed=true;
+  const q=state.questions[state.current];
+  document.getElementById('hintBtn').className='hint-btn used';
+  document.getElementById('hintBtn').textContent='👁️ ヒント使用済';
+  document.getElementById('hintText').textContent=q.hint;
+  document.getElementById('hintText').className='hint-text visible';
+  document.getElementById('hintPenalty').textContent=`-${HINT_COST}pt`;
+  document.getElementById('hintPenalty').className='hint-penalty visible';
+}
 
-  const isCorrect = chosen === q.answer;
-  const buttons = document.querySelectorAll('.choice-btn');
-  buttons.forEach(b => {
-    b.disabled = true;
-    const main = b.querySelector('.choice-sub') ? b.innerHTML.split('<span')[0].trim() : b.textContent.trim();
-    if (main === q.answer) b.classList.add('correct');
+function handleAnswer(chosen,q,btn){
+  if(state.answered) return;
+  state.answered=true;
+  const ok=chosen===q.answer;
+
+  document.querySelectorAll('.choice-btn').forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===q.answer) b.classList.add('correct');
   });
 
-  if (isCorrect) {
+  if(ok){
     btn.classList.add('correct');
     state.correct++;
     state.streak++;
-    state.bestStreak = Math.max(state.bestStreak, state.streak);
-    const bonus = state.streak >= 3 ? state.streak * 2 : 10;
-    state.score += bonus;
-
-    // Damage enemy
-    state.enemyHp = Math.max(0, state.enemyHp - PLAYER_DAMAGE);
-    updateHpBars();
-
-    // Animation
+    state.bestStreak=Math.max(state.bestStreak,state.streak);
+    const base=state.streak>=3?state.streak*2:10;
+    const gained=Math.max(0,base-(state.hintUsed?HINT_COST:0));
+    state.score+=gained;
+    state.enemyHp=Math.max(0,state.enemyHp-P_DMG);
+    updateHP();
     document.getElementById('playerSprite').classList.add('attack');
-    setTimeout(() => document.getElementById('playerSprite').classList.remove('attack'), 450);
+    setTimeout(()=>document.getElementById('playerSprite').classList.remove('attack'),450);
     document.getElementById('enemySprite').classList.add('shake');
-    setTimeout(() => document.getElementById('enemySprite').classList.remove('shake'), 450);
-    flashDamage('enemy-hit');
-    spawnDamageNum(`-${PLAYER_DAMAGE}HP`, 'var(--accent)', 75);
-
-    const msg = correctMsgs[Math.floor(Math.random() * correctMsgs.length)];
-    document.getElementById('battleMsgText').textContent = `${msg[0]} +${bonus}pt！`;
-    document.getElementById('battleMsgEn').textContent = msg[1];
-
-    // Check streak milestone
-    const milestone = [...streakMsgs].reverse().find(([n]) => state.streak >= n);
-    if (milestone && state.streak === milestone[0]) {
-      setTimeout(() => {
-        document.getElementById('battleMsgText').textContent = milestone[1].split('/')[0];
-        document.getElementById('battleMsgEn').textContent = milestone[1].split('/')[1] || '';
-      }, 600);
-    }
-
+    setTimeout(()=>document.getElementById('enemySprite').classList.remove('shake'),450);
+    flashDmg('enemy-hit');
+    spawnNum(`-${P_DMG}HP`,'var(--correct)',75);
+    const m=correctMsgs[Math.floor(Math.random()*correctMsgs.length)];
+    const hn=state.hintUsed?`（ヒント -${HINT_COST}pt）`:'';
+    document.getElementById('battleMsg').textContent=`${m} +${gained}pt！${hn}`;
   } else {
     btn.classList.add('wrong');
     state.wrong++;
-    state.streak = 0;
-
-    // Damage player
-    state.playerHp = Math.max(0, state.playerHp - ENEMY_DAMAGE);
-    updateHpBars();
-
-    // Animation
+    state.streak=0;
+    state.playerHp=Math.max(0,state.playerHp-E_DMG);
+    updateHP();
     document.getElementById('enemySprite').classList.add('attack');
-    setTimeout(() => document.getElementById('enemySprite').classList.remove('attack'), 450);
+    setTimeout(()=>document.getElementById('enemySprite').classList.remove('attack'),450);
     document.getElementById('playerSprite').classList.add('shake');
-    setTimeout(() => document.getElementById('playerSprite').classList.remove('shake'), 450);
-    flashDamage('player-hit');
-    spawnDamageNum(`-${ENEMY_DAMAGE}HP`, 'var(--accent2)', 25);
-
-    const msg = wrongMsgs[Math.floor(Math.random() * wrongMsgs.length)];
-    document.getElementById('battleMsgText').textContent = `${msg[0]} 正解は「${q.answer}」！`;
-    document.getElementById('battleMsgEn').textContent = msg[1];
-
-    state.missed.push({ q: q.questionJp, a: q.answer });
+    setTimeout(()=>document.getElementById('playerSprite').classList.remove('shake'),450);
+    flashDmg('player-hit');
+    spawnNum(`-${E_DMG}HP`,'var(--wrong)',25);
+    const m=wrongMsgs[Math.floor(Math.random()*wrongMsgs.length)];
+    document.getElementById('battleMsg').textContent=`${m} 正解は「${q.answer}」！`;
+    state.missed.push({q:q.label,a:q.answer});
   }
 
-  updateStreakDisplay();
-
-  // Check game over conditions
-  if (state.playerHp <= 0) {
-    setTimeout(() => endBattle('lose'), 1200);
-    return;
-  }
-  if (state.enemyHp <= 0) {
-    setTimeout(() => endBattle('win'), 1200);
-    return;
-  }
-
-  // Next question
+  if(state.playerHp<=0){setTimeout(()=>endBattle('lose'),1300);return;}
+  if(state.enemyHp<=0){setTimeout(()=>endBattle('win'),1300);return;}
   state.current++;
-  setTimeout(() => {
-    if (state.current >= state.questions.length) {
-      endBattle();
-    } else {
-      renderQuestion();
-    }
-  }, 1400);
+  setTimeout(()=>{if(state.current>=state.questions.length)endBattle();else renderQ();},1500);
 }
 
-function updateStreakDisplay() {
-  const el = document.getElementById('streakDisplay');
-  if (state.streak >= 3) {
-    el.textContent = `🔥 ${state.streak}連続正解！/ ${state.streak} in a row!`;
-    el.style.color = state.streak >= 5 ? 'var(--accent3)' : 'var(--accent)';
+function endBattle(result){
+  const pct=state.correct/state.questions.length;
+  let emoji,titleJp,subJp,rankVal,rankJp,rankColor;
+  if(result==='lose'||state.playerHp<=0){
+    emoji='💀';titleJp='ゲームオーバー！';subJp='Dr.バリウム：「フハハ！また来い！」';
+    rankVal='F';rankJp='完敗… / Total Defeat';rankColor='var(--accent2)';
+  } else if(result==='win'||state.enemyHp<=0){
+    emoji='🏆';titleJp='Dr.バリウムを倒した！';subJp='Dr.バリウム：「くっ…まさか…」';
+    rankVal='S';rankJp='化学の神 / Chem God';rankColor='var(--accent3)';
   } else {
-    el.textContent = '';
+    if(pct===1)      {emoji='🌟';titleJp='満点！';        rankVal='S';rankJp='化学の神 / Chem God';       rankColor='var(--accent3)';}
+    else if(pct>=0.8){emoji='🌟';titleJp='素晴らしい！';  rankVal='A';rankJp='化学戦士 / Chem Warrior';   rankColor='var(--accent)';}
+    else if(pct>=0.6){emoji='⚗️';titleJp='よくやった！';  rankVal='B';rankJp='見習い研究者 / Jr. Researcher';rankColor='#88aaff';}
+    else             {emoji='😓';titleJp='要復習！';       rankVal='C';rankJp='要復習 / Keep Studying';    rankColor='var(--accent2)';}
+    subJp=`正答率 ${Math.round(pct*100)}%`;
   }
-}
-
-function endBattle(result) {
-  const pct = state.correct / state.questions.length;
-  const isWin = result === 'win' || (result !== 'lose' && pct >= 0.6);
-
-  let emoji, titleJp, titleEn, rankVal, rankJp, rankEn, rankColor;
-
-  if (result === 'lose' || state.playerHp <= 0) {
-    emoji = '💀';
-    titleJp = 'ゲームオーバー！';
-    titleEn = 'GAME OVER!';
-    rankVal = 'F';
-    rankJp = '完敗…';
-    rankEn = 'Total Defeat';
-    rankColor = 'var(--accent2)';
-  } else if (result === 'win' || state.enemyHp <= 0) {
-    emoji = '🏆';
-    titleJp = 'Dr.バリウムを倒した！';
-    titleEn = 'Dr. Barium DEFEATED!';
-    rankVal = 'S';
-    rankJp = '化学の神';
-    rankEn = 'Chem God';
-    rankColor = 'var(--accent3)';
-  } else {
-    emoji = pct >= 0.8 ? '🌟' : pct >= 0.6 ? '⚗️' : '😓';
-    titleJp = pct >= 0.8 ? '素晴らしい！' : pct >= 0.6 ? 'よくやった！' : '要復習！';
-    titleEn = pct >= 0.8 ? 'Outstanding!' : pct >= 0.6 ? 'Well done!' : 'Keep studying!';
-    if (pct === 1) { rankVal = 'S'; rankJp = '化学の神'; rankEn = 'Chem God'; rankColor = 'var(--accent3)'; }
-    else if (pct >= 0.8) { rankVal = 'A'; rankJp = '化学戦士'; rankEn = 'Chem Warrior'; rankColor = 'var(--accent)'; }
-    else if (pct >= 0.6) { rankVal = 'B'; rankJp = '見習い研究者'; rankEn = 'Junior Researcher'; rankColor = '#88aaff'; }
-    else { rankVal = 'C'; rankJp = '要復習'; rankEn = 'Keep Studying'; rankColor = 'var(--accent2)'; }
-  }
-
-  document.getElementById('resultEmoji').textContent = emoji;
-  document.getElementById('resultTitle').textContent = `${titleJp} / ${titleEn}`;
-  const sub = result === 'lose'
-    ? 'Dr.バリウム：「フハハ！また来い！」'
-    : result === 'win'
-    ? 'Dr.バリウム：「くっ…まさか負けるとは…」'
-    : `正答率 / Accuracy: ${Math.round(pct * 100)}%`;
-  document.getElementById('resultSubtitle').textContent = sub;
-
-  document.getElementById('rankValue').textContent = rankVal;
-  document.getElementById('rankValue').style.color = rankColor;
-  document.getElementById('rankName').textContent = `${rankJp} / ${rankEn}`;
-
-  document.getElementById('statCorrect').textContent = state.correct;
-  document.getElementById('statWrong').textContent = state.wrong;
-  document.getElementById('statScore').textContent = state.score;
-  document.getElementById('statStreak').textContent = state.bestStreak;
-
-  // Missed list
-  if (state.missed.length > 0) {
-    document.getElementById('missedSection').style.display = 'block';
-    const container = document.getElementById('missedItems');
-    container.innerHTML = state.missed.map(m =>
-      `<div class="missed-item"><span class="missed-q">${m.q}</span><span class="missed-a">→ ${m.a}</span></div>`
-    ).join('');
-  } else {
-    document.getElementById('missedSection').style.display = 'none';
-  }
-
-  // Retry button text
-  document.getElementById('retryBtn').textContent = result === 'lose'
-    ? '🔄 リベンジ！/ REVENGE!'
-    : '🔄 もう一度！/ RETRY!';
-
+  document.getElementById('resultEmoji').textContent=emoji;
+  document.getElementById('resultTitle').textContent=titleJp;
+  document.getElementById('resultSubtitle').textContent=subJp;
+  document.getElementById('rankValue').textContent=rankVal;
+  document.getElementById('rankValue').style.color=rankColor;
+  document.getElementById('rankName').textContent=rankJp;
+  document.getElementById('statCorrect').textContent=state.correct;
+  document.getElementById('statWrong').textContent=state.wrong;
+  document.getElementById('statScore').textContent=state.score;
+  document.getElementById('statStreak').textContent=state.bestStreak;
+  if(state.missed.length>0){
+    document.getElementById('missedSection').style.display='block';
+    document.getElementById('missedItems').innerHTML=state.missed.map(m=>`<div class="missed-item"><span class="missed-q">${m.q}</span><span class="missed-a">→ ${m.a}</span></div>`).join('');
+  } else {document.getElementById('missedSection').style.display='none';}
+  document.getElementById('retryBtn').textContent=result==='lose'?'🔄 リベンジ！/ REVENGE!':'🔄 もう一度！/ RETRY!';
   showScreen('resultScreen');
 }
 
-function retryBattle() {
-  startBattle(state.category);
-}
-
-function goMenu() {
-  // Randomize villain taunt on menu
-  const t = villainTaunts[Math.floor(Math.random() * villainTaunts.length)];
-  document.getElementById('menuTaunt').innerHTML = `${t[0]}<br><span style="color:var(--text-dim);font-size:11px;">${t[1]}</span>`;
+function retryBattle(){startBattle(state.category);}
+function goMenu(){
+  const t=taunts[Math.floor(Math.random()*taunts.length)];
+  document.getElementById('menuTaunt').innerHTML=`${t}<br><span style="color:var(--text-dim);font-size:11px">Can you defeat me this time?!</span>`;
   showScreen('menuScreen');
 }
-
-function fullReset() {
-  state = {
-    category: 'elements',
-    questions: [], current: 0,
-    playerHp: 100, enemyHp: 100,
-    score: 0, correct: 0, wrong: 0,
-    streak: 0, bestStreak: 0,
-    missed: [], answered: false,
-  };
+function fullReset(){
+  state={category:'elements',questions:[],current:0,playerHp:100,enemyHp:100,score:0,correct:0,wrong:0,streak:0,bestStreak:0,missed:[],answered:false,hintUsed:false};
   goMenu();
 }
-
-// Init
 goMenu();
 </script>
 </body>
