@@ -398,16 +398,18 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classL
 function flashDmg(type){const el=document.getElementById('damageFlash');el.className=`damage-flash ${type} show`;setTimeout(()=>el.classList.remove('show'),180);}
 function spawnNum(text,color,x){const el=document.createElement('div');el.className='damage-num';el.style.cssText=`color:${color};left:${x}%;top:35%`;el.textContent=text;document.body.appendChild(el);setTimeout(()=>el.remove(),900);}
 function updateHP(){
-  const ph=Math.max(0,state.playerHp),eh=Math.max(0,state.enemyHp);
+  const ph=Math.max(0,state.playerHp);
+  const eh=Math.max(0,state.enemyHp);
+  const eMax=state.enemyMaxHp||MAX_HP;
   document.getElementById('playerHpBar').style.width=ph+'%';
-  document.getElementById('enemyHpBar').style.width=eh+'%';
+  document.getElementById('enemyHpBar').style.width=(eh/eMax*100)+'%';
   document.getElementById('playerHpText').textContent=`HP: ${ph}/${MAX_HP}`;
-  document.getElementById('enemyHpText').textContent=`HP: ${eh}/${MAX_HP}`;
+  document.getElementById('enemyHpText').textContent=`HP: ${eh}/${eMax}`;
   document.getElementById('scoreDisplay').textContent=state.score+'pt';
 }
 
-function buildElementQs(){
-  return shuffle(elementsData).slice(0,Q_COUNT).map(el=>{
+function buildElementQs(n=Q_COUNT){
+  return shuffle(elementsData).slice(0,n).map(el=>{
     const nameToSym = Math.random()>0.5;
     if(nameToSym){
       const wrongs=shuffle(elementsData.filter(e=>e.symbol!==el.symbol)).slice(0,3).map(e=>e.symbol);
@@ -419,8 +421,8 @@ function buildElementQs(){
   });
 }
 
-function buildFormulaQs(){
-  return shuffle(formulasData).slice(0,Q_COUNT).map(f=>{
+function buildFormulaQs(n=Q_COUNT){
+  return shuffle(formulasData).slice(0,n).map(f=>{
     const nameToForm = Math.random()>0.4;
     if(nameToForm){
       const wrongs=shuffle(formulasData.filter(d=>d.formula!==f.formula)).slice(0,3).map(d=>d.formula);
@@ -433,10 +435,13 @@ function buildFormulaQs(){
 }
 
 function startBattle(cat){
-  state={category:cat,questions:[],current:0,playerHp:MAX_HP,enemyHp:MAX_HP,score:0,correct:0,wrong:0,streak:0,bestStreak:0,missed:[],answered:false,hintUsed:false};
-  if(cat==='elements') state.questions=buildElementQs();
-  else if(cat==='formulas') state.questions=buildFormulaQs();
-  else state.questions=shuffle([...buildElementQs().slice(0,5),...buildFormulaQs().slice(0,5)]);
+  let questions=[];
+  if(cat==='elements') questions=buildElementQs();
+  else if(cat==='formulas') questions=buildFormulaQs();
+  else questions=shuffle([...buildElementQs(elementsData.length),...buildFormulaQs(formulasData.length)]);
+  // Scale enemy HP so it takes the full battle to defeat: exactly Q_COUNT correct hits to win
+  const enemyHp = P_DMG * questions.length;
+  state={category:cat,questions,current:0,playerHp:MAX_HP,enemyHp,enemyMaxHp:enemyHp,score:0,correct:0,wrong:0,streak:0,bestStreak:0,missed:[],answered:false,hintUsed:false};
   showScreen('battleScreen');
   updateHP();
   renderQ();
@@ -584,7 +589,7 @@ function goMenu(){
   showScreen('menuScreen');
 }
 function fullReset(){
-  state={category:'elements',questions:[],current:0,playerHp:100,enemyHp:100,score:0,correct:0,wrong:0,streak:0,bestStreak:0,missed:[],answered:false,hintUsed:false};
+  state={category:'elements',questions:[],current:0,playerHp:100,enemyHp:100,enemyMaxHp:100,score:0,correct:0,wrong:0,streak:0,bestStreak:0,missed:[],answered:false,hintUsed:false};
   goMenu();
 }
 goMenu();
