@@ -230,6 +230,37 @@
   .trophy { font-size: 56px; margin-bottom: 12px; }
 
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+  /* bottom padding so sticky bar doesn't cover content */
+  .wrap { padding-bottom: 110px; }
+
+  /* STICKY AUDIO PLAYER */
+  .audio-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--panel);
+    border-top: 2px solid var(--border);
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.5);
+    z-index: 500;
+    padding: 10px 16px 12px;
+  }
+  .audio-inner { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+  .audio-title { font-family: var(--font-mono); font-size: 7px; color: var(--text-dim); letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .audio-title span { color: var(--accent); }
+  .audio-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .aud-btn { background: var(--panel2); border: 1.5px solid var(--border); color: var(--text); border-radius: 4px; cursor: pointer; font-size: 15px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; flex-shrink: 0; }
+  .aud-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .aud-btn.primary { background: var(--accent); border-color: var(--accent); color: #000; width: 40px; height: 40px; font-size: 17px; }
+  .aud-btn.primary:hover { box-shadow: 0 0 12px rgba(0,255,204,0.4); }
+  .aud-btn.stop-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .speed-group { display: flex; gap: 4px; margin-left: auto; }
+  .spd-btn { background: var(--panel2); border: 1.5px solid var(--border); color: var(--text-dim); border-radius: 4px; cursor: pointer; font-family: var(--font-mono); font-size: 7px; padding: 0 8px; height: 36px; transition: all 0.12s; white-space: nowrap; }
+  .spd-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+  .spd-btn.active { background: rgba(255,221,0,0.1); border-color: var(--accent3); color: var(--accent3); }
+  .audio-progress-wrap { display: flex; align-items: center; gap: 8px; }
+  .audio-prog-bar { flex: 1; height: 4px; background: var(--panel2); border: 1px solid var(--border); border-radius: 99px; overflow: hidden; }
+  .audio-prog-fill { height: 100%; background: var(--accent); border-radius: 99px; width: 0%; transition: width 0.5s linear; }
+  .audio-time { font-family: var(--font-mono); font-size: 7px; color: var(--text-dim); white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -457,5 +488,194 @@ function restartAll() {
 renderTabs();
 renderStory();
 </script>
+
+<!-- STICKY AUDIO PLAYER -->
+<div class="audio-bar" id="audioBar">
+  <div class="audio-inner">
+    <div class="audio-title">🔊 NOW READING: <span id="audioStoryTitle">—</span></div>
+    <div class="audio-controls">
+      <button class="aud-btn" onclick="skip(-15)" title="-15s">⏮ 15</button>
+      <button class="aud-btn primary" id="playPauseBtn" onclick="togglePlayPause()">▶</button>
+      <button class="aud-btn stop-btn" onclick="stopAudio()" title="Stop">⏹</button>
+      <button class="aud-btn" onclick="skip(15)" title="+15s">15 ⏭</button>
+      <div class="speed-group">
+        <button class="spd-btn" onclick="setSpeed(0.5)">0.5×</button>
+        <button class="spd-btn active" onclick="setSpeed(1)">1×</button>
+        <button class="spd-btn" onclick="setSpeed(1.5)">1.5×</button>
+      </div>
+    </div>
+    <div class="audio-progress-wrap">
+      <div class="audio-prog-bar"><div class="audio-prog-fill" id="audioProgFill"></div></div>
+      <div class="audio-time" id="audioTime">0:00</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== WEB SPEECH AUDIO PLAYER =====
+// We split passage text into sentences and track position for seek/progress
+let tts = {
+  sentences: [],    // array of sentence strings for current story
+  index: 0,         // current sentence index
+  playing: false,
+  paused: false,
+  rate: 1,
+  utterance: null,
+  startTime: null,
+  elapsed: 0,       // total chars spoken so far (for progress)
+  totalChars: 0,
+};
+
+function getPassageText(storyIdx) {
+  const s = STORIES[storyIdx];
+  // Strip HTML tags from body
+  const div = document.createElement('div');
+  div.innerHTML = s.body;
+  return div.textContent || div.innerText || '';
+}
+
+function splitSentences(text) {
+  // Split on sentence-ending punctuation, keep non-empty
+  return text.match(/[^.!?]+[.!?]+/g)?.map(s => s.trim()).filter(s => s.length > 2) || [text];
+}
+
+function updatePlayerTitle() {
+  document.getElementById('audioStoryTitle').textContent = STORIES[current].title.toUpperCase();
+}
+
+function updateProgress() {
+  if (!tts.sentences.length) return;
+  const done = tts.sentences.slice(0, tts.index).join(' ').length;
+  const pct = Math.min(100, Math.round(done / tts.totalChars * 100));
+  document.getElementById('audioProgFill').style.width = pct + '%';
+  // Estimate time: ~150 words/min at rate 1, ~13 chars/word avg
+  const charsPerSec = (150 / 60) * 13 * tts.rate;
+  const secsTotal = tts.totalChars / charsPerSec;
+  const secsDone = done / charsPerSec;
+  document.getElementById('audioTime').textContent = fmtTime(secsDone) + ' / ' + fmtTime(secsTotal);
+}
+
+function fmtTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + String(sec).padStart(2, '0');
+}
+
+function speakFrom(idx) {
+  window.speechSynthesis.cancel();
+  tts.index = Math.max(0, Math.min(idx, tts.sentences.length - 1));
+  tts.playing = true;
+  tts.paused = false;
+  document.getElementById('playPauseBtn').textContent = '⏸';
+  speakNext();
+}
+
+function speakNext() {
+  if (tts.index >= tts.sentences.length) {
+    // finished
+    tts.playing = false;
+    tts.paused = false;
+    tts.index = 0;
+    document.getElementById('playPauseBtn').textContent = '▶';
+    document.getElementById('audioProgFill').style.width = '100%';
+    return;
+  }
+  const utt = new SpeechSynthesisUtterance(tts.sentences[tts.index]);
+  utt.lang = 'en-US';
+  utt.rate = tts.rate;
+  utt.onend = () => {
+    if (!tts.playing) return;
+    tts.index++;
+    updateProgress();
+    speakNext();
+  };
+  tts.utterance = utt;
+  window.speechSynthesis.speak(utt);
+  updateProgress();
+}
+
+function togglePlayPause() {
+  const synth = window.speechSynthesis;
+  if (!tts.playing && !tts.paused) {
+    // fresh start
+    const text = getPassageText(current);
+    tts.sentences = splitSentences(text);
+    tts.totalChars = text.length;
+    tts.index = 0;
+    updatePlayerTitle();
+    speakFrom(0);
+  } else if (tts.playing && !tts.paused) {
+    synth.pause();
+    tts.paused = true;
+    tts.playing = false;
+    document.getElementById('playPauseBtn').textContent = '▶';
+  } else if (tts.paused) {
+    synth.resume();
+    tts.paused = false;
+    tts.playing = true;
+    document.getElementById('playPauseBtn').textContent = '⏸';
+  }
+}
+
+function stopAudio() {
+  window.speechSynthesis.cancel();
+  tts.playing = false;
+  tts.paused = false;
+  tts.index = 0;
+  document.getElementById('playPauseBtn').textContent = '▶';
+  document.getElementById('audioProgFill').style.width = '0%';
+  document.getElementById('audioTime').textContent = '0:00';
+}
+
+function skip(seconds) {
+  if (!tts.sentences.length) return;
+  // Estimate chars per second
+  const charsPerSec = (150 / 60) * 13 * tts.rate;
+  const charsToSkip = Math.abs(seconds) * charsPerSec;
+  // Find how many sentences that is
+  let chars = 0;
+  let target = tts.index;
+  if (seconds > 0) {
+    for (let i = tts.index; i < tts.sentences.length; i++) {
+      chars += tts.sentences[i].length;
+      if (chars >= charsToSkip) { target = i + 1; break; }
+      target = tts.sentences.length;
+    }
+  } else {
+    let done = tts.sentences.slice(0, tts.index).join('').length;
+    let back = Math.max(0, done - charsToSkip);
+    chars = 0; target = 0;
+    for (let i = 0; i < tts.sentences.length; i++) {
+      chars += tts.sentences[i].length;
+      if (chars >= back) { target = i; break; }
+    }
+  }
+  if (tts.playing || tts.paused) speakFrom(target);
+}
+
+function setSpeed(rate) {
+  tts.rate = rate;
+  document.querySelectorAll('.spd-btn').forEach(b => {
+    b.classList.toggle('active', parseFloat(b.textContent) === rate);
+  });
+  // restart current sentence at new speed if playing
+  if (tts.playing || tts.paused) {
+    const idx = tts.index;
+    speakFrom(idx);
+  }
+}
+
+// Stop audio when switching stories
+const _origSwitch = switchStory;
+switchStory = function(idx) {
+  stopAudio();
+  _origSwitch(idx);
+  updatePlayerTitle();
+};
+
+// Init player title
+updatePlayerTitle();
+</script>
+
 </body>
 </html>
