@@ -499,6 +499,7 @@ renderStory();
       <button class="aud-btn stop-btn" onclick="stopAudio()" title="Stop">⏹</button>
       <button class="aud-btn" onclick="skip(15)" title="+15s">15 ⏭</button>
       <div class="speed-group">
+        <button class="spd-btn" onclick="setSpeed(0.4)">0.4×</button>
         <button class="spd-btn" onclick="setSpeed(0.5)">0.5×</button>
         <button class="spd-btn active" onclick="setSpeed(1)">1×</button>
         <button class="spd-btn" onclick="setSpeed(1.5)">1.5×</button>
@@ -587,7 +588,7 @@ function speakNext() {
     if (!tts.playing) return;
     tts.index++;
     updateProgress();
-    speakNext();
+    setTimeout(speakNext, 600);
   };
   tts.utterance = utt;
   window.speechSynthesis.speak(utt);
