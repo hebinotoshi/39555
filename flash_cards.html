@@ -337,9 +337,22 @@
 
     <div class="setup-panel">
       <span class="setup-label">📚 LESSON / レッスン</span>
-      <div style="font-size:13px;color:var(--text-dim);padding:10px 14px;background:var(--panel2);border:1px solid var(--border);border-radius:4px;">
-        New Crown 2 — Lesson 1 Vocabulary<br>
-        <span style="font-size:11px;opacity:0.7">24 words total</span>
+      <div class="mode-grid">
+        <button class="mode-btn selected" id="lessonL1" onclick="selectLesson('L1')">
+          <span class="mode-icon">1️⃣</span>
+          Lesson 1
+          <span class="mode-sub">24 words</span>
+        </button>
+        <button class="mode-btn" id="lessonL2" onclick="selectLesson('L2')">
+          <span class="mode-icon">2️⃣</span>
+          Lesson 2
+          <span class="mode-sub">32 words</span>
+        </button>
+        <button class="mode-btn" id="lessonALL" onclick="selectLesson('ALL')" style="grid-column:span 2">
+          <span class="mode-icon">🔀</span>
+          両方 / Both Lessons
+          <span class="mode-sub">56 words mixed</span>
+        </button>
       </div>
     </div>
 
@@ -364,8 +377,8 @@
       <div class="count-grid">
         <button class="count-btn selected" onclick="selectCount(10)">10</button>
         <button class="count-btn" onclick="selectCount(20)">20</button>
-        <button class="count-btn" onclick="selectCount(30)">ALL<br><span style="font-size:6px">(24)</span></button>
-        <button class="count-btn" onclick="selectCount(99)">🔀<br><span style="font-size:6px">SHUFFLE</span></button>
+        <button class="count-btn" onclick="selectCount(30)">30</button>
+        <button class="count-btn" onclick="selectCount(99)">ALL</button>
       </div>
     </div>
 
@@ -477,36 +490,74 @@
 </div><!-- /container -->
 
 <script>
-// ===== VOCABULARY DATA — New Crown 2 Lesson 1 =====
-const VOCAB = [
-  { jp: '…の前に（の）',     en: 'before' },
-  { jp: '写真撮影',           en: 'photography' },
-  { jp: 'そのとおり。',       en: "That's right." },
-  { jp: '記事',               en: 'article' },
+// ===== VOCABULARY DATA — New Crown 2 Lesson 1 & 2 =====
+const VOCAB_L1 = [
+  { jp: '…の前に（の）',          en: 'before' },
+  { jp: '写真撮影',                en: 'photography' },
+  { jp: 'そのとおり。',            en: "That's right." },
+  { jp: '記事',                    en: 'article' },
   { jp: '勝ち抜き戦、トーナメント', en: 'tournament' },
-  { jp: '混雑した',           en: 'crowded' },
-  { jp: '合唱',               en: 'chorus' },
-  { jp: '代わりに',           en: 'instead' },
-  { jp: '早い',               en: 'early' },
-  { jp: '分',                 en: 'minute' },
-  { jp: '選択',               en: 'choice' },
-  { jp: 'キャンセル、中止する', en: 'cancel' },
-  { jp: '…に対抗して',       en: 'against' },
-  { jp: '最後の',             en: 'final' },
-  { jp: '（時間の）秒',       en: 'second' },
-  { jp: '確かに、きっと',     en: 'surely' },
-  { jp: '競技会',             en: 'competition' },
-  { jp: '詩',                 en: 'poem' },
-  { jp: '広げる',             en: 'spread' },
-  { jp: '…まで（ずっと）',   en: 'until' },
-  { jp: '半分の',             en: 'half' },
-  { jp: '1時間',              en: 'hour' },
-  { jp: '負ける',             en: 'lose' },
-  { jp: 'こわす',             en: 'break' },
+  { jp: '混雑した',                en: 'crowded' },
+  { jp: '合唱',                    en: 'chorus' },
+  { jp: '代わりに',                en: 'instead' },
+  { jp: '早い',                    en: 'early' },
+  { jp: '分',                      en: 'minute' },
+  { jp: '選択',                    en: 'choice' },
+  { jp: 'キャンセル、中止する',    en: 'cancel' },
+  { jp: '…に対抗して',            en: 'against' },
+  { jp: '最後の',                  en: 'final' },
+  { jp: '（時間の）秒',            en: 'second' },
+  { jp: '確かに、きっと',          en: 'surely' },
+  { jp: '競技会',                  en: 'competition' },
+  { jp: '詩',                      en: 'poem' },
+  { jp: '広げる',                  en: 'spread' },
+  { jp: '…まで（ずっと）',        en: 'until' },
+  { jp: '半分の',                  en: 'half' },
+  { jp: '1時間',                   en: 'hour' },
+  { jp: '負ける',                  en: 'lose' },
+  { jp: 'こわす',                  en: 'break' },
 ];
 
+const VOCAB_L2 = [
+  { jp: '冒険',                    en: 'adventure' },
+  { jp: 'おもな',                  en: 'main' },
+  { jp: 'いたずらな、わんぱくな',  en: 'naughty' },
+  { jp: 'やっかいな事態、困難',    en: 'trouble' },
+  { jp: '貸す',                    en: 'lend' },
+  { jp: '同意する',                en: 'agree' },
+  { jp: '実験',                    en: 'experiment' },
+  { jp: '空っぽ',                  en: 'empty' },
+  { jp: 'もう1つの、別の',         en: 'another' },
+  { jp: 'シリーズ',                en: 'series' },
+  { jp: '作者',                    en: 'author' },
+  { jp: '景色',                    en: 'scenery' },
+  { jp: '自然',                    en: 'nature' },
+  { jp: '実は',                    en: 'in fact' },
+  { jp: '地方',                    en: 'district' },
+  { jp: '地域',                    en: 'area' },
+  { jp: 'まだ、今でも',            en: 'still' },
+  { jp: 'いつか',                  en: 'someday' },
+  { jp: '変な',                    en: 'strange' },
+  { jp: '風景',                    en: 'landscape' },
+  { jp: '意見',                    en: 'opinion' },
+  { jp: '遠い',                    en: 'faraway' },
+  { jp: '訓練',                    en: 'training' },
+  { jp: 'おとな',                  en: 'grown-up' },
+  { jp: '学習者',                  en: 'learner' },
+  { jp: '魔女',                    en: 'witch' },
+  { jp: 'さらにその上',            en: 'plus' },
+  { jp: '…の間で',                en: 'among' },
+  { jp: '10代の少年',              en: 'teenager' },
+  { jp: '結末',                    en: 'ending' },
+  { jp: '心温まる',                en: 'heartwarming' },
+  { jp: '推薦する、すすめる',      en: 'recommend' },
+];
+
+const VOCAB_ALL = [...VOCAB_L1, ...VOCAB_L2];
+
+
 // ===== STATE =====
-let cfg = { mode: 'flash', count: 10 };
+let cfg = { mode: 'flash', count: 10, lesson: 'L1' };
 let session = {};
 
 // ===== HELPERS =====
@@ -529,6 +580,11 @@ function flash(type) {
 }
 
 // ===== SETUP =====
+function selectLesson(l) {
+  cfg.lesson = l;
+  ['L1','L2','ALL'].forEach(x => document.getElementById('lesson'+x).classList.toggle('selected', x === l));
+}
+
 function selectMode(m) {
   cfg.mode = m;
   document.getElementById('modeFlash').classList.toggle('selected', m === 'flash');
@@ -542,7 +598,8 @@ function selectCount(n) {
 }
 
 function startSession() {
-  const pool = shuffle(VOCAB);
+  const vocabMap = { L1: VOCAB_L1, L2: VOCAB_L2, ALL: VOCAB_ALL };
+  const pool = shuffle(vocabMap[cfg.lesson] || VOCAB_L1);
   const words = cfg.count >= 99 ? pool : pool.slice(0, Math.min(cfg.count, VOCAB.length));
   session = {
     words,
@@ -734,9 +791,11 @@ function showResult() {
 
   document.getElementById('resultEmoji').textContent = emoji;
   document.getElementById('resultTitle').textContent = title;
+  const lessonNames = { L1: 'Lesson 1', L2: 'Lesson 2', ALL: 'Lesson 1 & 2' };
+  const lName = lessonNames[cfg.lesson] || '';
   document.getElementById('resultSub').textContent = cfg.mode === 'flash'
-    ? `フラッシュカード / ${total} cards`
-    : `タイピング / ${total} words`;
+    ? `フラッシュカード · ${lName} / ${total} cards`
+    : `タイピング · ${lName} / ${total} words`;
   document.getElementById('rCorrect').textContent = correct;
   document.getElementById('rWrong').textContent = wrong;
   document.getElementById('rPct').textContent = pct + '%';
