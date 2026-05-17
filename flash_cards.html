@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flash Cards — New Crown 2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0a0a1a;
+    --panel: #12122a;
+    --panel2: #1a1a3a;
+    --border: #3a3a7a;
+    --accent: #00ffcc;
+    --accent2: #ff4488;
+    --accent3: #ffdd00;
+    --accent4: #aa44ff;
+    --text: #e0e0ff;
+    --text-dim: #7070aa;
+    --correct: #00ffcc;
+    --wrong: #ff4488;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    padding: 0 0 40px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+    padding: 0 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* BACK + TITLE */
+  .back-bar { padding: 14px 0 0; }
+  .back-link { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--text-dim); text-decoration: none; letter-spacing: 1px; transition: color 0.15s; }
+  .back-link:hover { color: var(--accent); }
+
+  .title-block { text-align: center; padding: 18px 0 20px; animation: titlePulse 2s ease-in-out infinite alternate; }
+  @keyframes titlePulse {
+    from { text-shadow: 0 0 10px var(--accent4); }
+    to   { text-shadow: 0 0 20px var(--accent4), 0 0 40px var(--accent4); }
+  }
+  .title-jp { font-family: 'Press Start 2P', monospace; font-size: clamp(11px,3.5vw,16px); color: var(--accent4); line-height: 1.8; }
+  .title-en { font-family: 'Press Start 2P', monospace; font-size: clamp(7px,2vw,9px); color: var(--text-dim); letter-spacing: 3px; margin-top: 4px; }
+
+  /* SCREENS */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── SETUP SCREEN ── */
+  .setup-panel {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    padding: 22px 20px;
+    margin-bottom: 14px;
+  }
+  .setup-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--accent3);
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  /* mode selector */
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 6px; }
+  .mode-btn {
+    background: var(--panel2);
+    border: 2px solid var(--border);
+    color: var(--text);
+    border-radius: 4px;
+    padding: 16px 12px;
+    cursor: pointer;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: center;
+    transition: all 0.15s;
+    line-height: 1.5;
+  }
+  .mode-btn .mode-icon { font-size: 28px; display: block; margin-bottom: 6px; }
+  .mode-btn .mode-sub { font-size: 11px; color: var(--text-dim); font-weight: 400; display: block; margin-top: 3px; }
+  .mode-btn:hover { border-color: var(--accent4); background: rgba(170,68,255,0.07); }
+  .mode-btn.selected { border-color: var(--accent4); background: rgba(170,68,255,0.12); color: var(--accent4); box-shadow: 0 0 14px rgba(170,68,255,0.2); }
+  .mode-btn.selected .mode-sub { color: var(--accent4); opacity: 0.7; }
+
+  /* count selector */
+  .count-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .count-btn {
+    background: var(--panel2);
+    border: 2px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 4px;
+    padding: 10px 4px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .count-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+  .count-btn.selected { border-color: var(--accent3); background: rgba(255,221,0,0.08); color: var(--accent3); }
+
+  .start-btn {
+    display: block; width: 100%;
+    background: var(--accent4); color: #fff;
+    border: none; padding: 15px 20px;
+    font-family: 'Press Start 2P', monospace; font-size: 10px;
+    cursor: pointer; border-radius: 4px;
+    letter-spacing: 1px; transition: all 0.15s;
+    box-shadow: 0 4px 0 rgba(100,0,200,0.4);
+    margin-top: 4px;
+  }
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 rgba(100,0,200,0.4), 0 0 20px rgba(170,68,255,0.3); }
+  .start-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(100,0,200,0.4); }
+  .start-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+  /* ── PROGRESS BAR ── */
+  .prog-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .prog-bar { flex: 1; height: 5px; background: var(--panel2); border: 1px solid var(--border); border-radius: 99px; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--accent4); border-radius: 99px; transition: width 0.4s; }
+  .prog-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); white-space: nowrap; }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 16px; }
+  .score-pill { font-family: 'Press Start 2P', monospace; font-size: 7px; padding: 5px 10px; border-radius: 99px; border: 1px solid var(--border); background: var(--panel2); }
+  .score-pill.cor { color: var(--correct); border-color: rgba(0,255,204,0.3); }
+  .score-pill.wrn { color: var(--wrong); border-color: rgba(255,68,136,0.3); }
+  .score-pill.tot { color: var(--text-dim); }
+
+  /* ── FLASHCARD ── */
+  .card-wrap {
+    perspective: 1000px;
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    transform-style: preserve-3d;
+    transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+  }
+  .card-inner.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    width: 100%; height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+  }
+  .card-front {
+    background: var(--panel);
+    border-color: var(--accent4);
+    box-shadow: 0 0 20px rgba(170,68,255,0.1);
+  }
+  .card-back {
+    background: var(--panel2);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(0,255,204,0.1);
+    transform: rotateY(180deg);
+  }
+  .card-tag { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 14px; }
+  .card-front .card-tag { color: var(--accent4); opacity: 0.7; }
+  .card-back .card-tag { color: var(--accent); opacity: 0.7; }
+  .card-word { font-size: clamp(26px, 8vw, 40px); font-weight: 800; line-height: 1.2; }
+  .card-front .card-word { color: #fff; }
+  .card-back .card-word { color: var(--accent); }
+  .card-hint { font-size: 12px; color: var(--text-dim); margin-top: 10px; }
+  .card-tap-hint { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); margin-top: 14px; letter-spacing: 1px; animation: blink 1.5s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+  /* flashcard nav */
+  .card-nav { display: flex; gap: 10px; margin-bottom: 14px; }
+  .nav-btn {
+    flex: 1; padding: 13px;
+    border: 2px solid var(--border);
+    background: var(--panel2); color: var(--text);
+    border-radius: 4px; cursor: pointer;
+    font-family: 'Press Start 2P', monospace; font-size: 8px;
+    transition: all 0.12s; text-align: center;
+  }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn.know { border-color: var(--correct); color: var(--correct); }
+  .nav-btn.know:hover { background: rgba(0,255,204,0.08); }
+  .nav-btn.again { border-color: var(--wrong); color: var(--wrong); }
+  .nav-btn.again:hover { background: rgba(255,68,136,0.08); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  /* ── TYPING MODE ── */
+  .type-card {
+    background: var(--panel);
+    border: 2px solid var(--accent4);
+    border-radius: 4px;
+    padding: 30px 20px;
+    text-align: center;
+    margin-bottom: 16px;
+    box-shadow: 0 0 20px rgba(170,68,255,0.1);
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .type-tag { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--accent4); opacity: 0.7; letter-spacing: 2px; margin-bottom: 14px; }
+  .type-word { font-size: clamp(28px, 9vw, 44px); font-weight: 800; color: #fff; margin-bottom: 6px; }
+  .type-num { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); }
+
+  .input-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .type-input {
+    flex: 1;
+    background: var(--panel2);
+    border: 2px solid var(--border);
+    color: var(--text);
+    padding: 13px 16px;
+    border-radius: 4px;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .type-input:focus { border-color: var(--accent4); }
+  .type-input.correct { border-color: var(--correct); background: rgba(0,255,204,0.06); color: var(--correct); }
+  .type-input.wrong { border-color: var(--wrong); background: rgba(255,68,136,0.06); color: var(--wrong); }
+
+  .submit-btn {
+    background: var(--accent4); color: #fff; border: none;
+    padding: 13px 20px; border-radius: 4px;
+    font-family: 'Press Start 2P', monospace; font-size: 9px;
+    cursor: pointer; transition: all 0.12s;
+    white-space: nowrap;
+  }
+  .submit-btn:hover { box-shadow: 0 0 12px rgba(170,68,255,0.4); }
+  .submit-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .feedback-box {
+    padding: 12px 16px; border-radius: 4px;
+    font-size: 14px; line-height: 1.6;
+    margin-bottom: 12px; display: none;
+    font-weight: 700;
+  }
+  .feedback-box.ok { display: block; background: rgba(0,255,204,0.08); color: var(--correct); border: 1px solid rgba(0,255,204,0.3); }
+  .feedback-box.ng { display: block; background: rgba(255,68,136,0.08); color: var(--wrong); border: 1px solid rgba(255,68,136,0.3); }
+
+  .next-btn {
+    display: block; width: 100%;
+    background: var(--panel2); color: var(--text);
+    border: 2px solid var(--border); padding: 13px;
+    font-family: 'Press Start 2P', monospace; font-size: 9px;
+    cursor: pointer; border-radius: 4px;
+    transition: all 0.12s; margin-bottom: 8px; display: none;
+  }
+  .next-btn.visible { display: block; }
+  .next-btn:hover { border-color: var(--accent4); color: var(--accent4); }
+
+  /* ── RESULT SCREEN ── */
+  .result-wrap { text-align: center; padding: 20px 0; }
+  .result-emoji { font-size: 72px; display: block; margin-bottom: 14px; animation: resultBounce 0.5s; }
+  @keyframes resultBounce { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .result-title { font-family: 'Press Start 2P', monospace; font-size: clamp(10px,3vw,14px); margin-bottom: 6px; line-height: 1.8; color: var(--accent4); }
+  .result-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
+
+  .result-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+  .r-stat { background: var(--panel2); border: 1px solid var(--border); border-radius: 4px; padding: 14px; text-align: center; }
+  .r-val { font-family: 'Press Start 2P', monospace; font-size: 22px; display: block; margin-bottom: 4px; }
+  .r-label { font-size: 10px; color: var(--text-dim); }
+
+  /* missed words review */
+  .missed-block { background: var(--panel2); border: 1px solid var(--border); border-radius: 4px; padding: 14px; margin: 14px 0; max-height: 220px; overflow-y: auto; text-align: left; }
+  .missed-title { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--wrong); margin-bottom: 10px; }
+  .missed-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; gap: 12px; }
+  .missed-row:last-child { border-bottom: none; }
+  .missed-jp { color: var(--text-dim); }
+  .missed-en { color: var(--correct); font-weight: 700; }
+
+  .btn-primary { display:block;width:100%;background:var(--accent4);color:#fff;border:none;padding:14px 20px;font-family:'Press Start 2P',monospace;font-size:10px;cursor:pointer;border-radius:4px;margin-bottom:10px;letter-spacing:1px;transition:all 0.15s;box-shadow:0 4px 0 rgba(100,0,200,0.4); }
+  .btn-primary:hover { transform:translateY(-2px); }
+  .btn-secondary { display:block;width:100%;background:transparent;color:var(--text-dim);border:2px solid var(--border);padding:12px 20px;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;border-radius:4px;margin-bottom:10px;transition:all 0.15s; }
+  .btn-secondary:hover { border-color:var(--text-dim);color:var(--text); }
+
+  .damage-flash { position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:999;opacity:0;transition:opacity 0.12s; }
+  .damage-flash.cor-flash { background:rgba(0,255,204,0.12); }
+  .damage-flash.wrn-flash { background:rgba(255,68,136,0.18); }
+  .damage-flash.show { opacity:1; }
+
+  /* separator */
+  .sep { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+</style>
+</head>
+<body>
+<div class="damage-flash" id="dmgFlash"></div>
+
+<div class="container">
+  <div class="back-bar">
+    <a class="back-link" href="index.html">◀ BACK TO MENU</a>
+  </div>
+
+  <div class="title-block">
+    <div class="title-jp">🃏 フラッシュカード</div>
+    <div class="title-en">FLASH CARDS — NEW CROWN 2</div>
+  </div>
+
+  <!-- ══ SETUP SCREEN ══ -->
+  <div class="screen active" id="setupScreen">
+
+    <div class="setup-panel">
+      <span class="setup-label">📚 LESSON / レッスン</span>
+      <div style="font-size:13px;color:var(--text-dim);padding:10px 14px;background:var(--panel2);border:1px solid var(--border);border-radius:4px;">
+        New Crown 2 — Lesson 1 Vocabulary<br>
+        <span style="font-size:11px;opacity:0.7">24 words total</span>
+      </div>
+    </div>
+
+    <div class="setup-panel">
+      <span class="setup-label">🎮 MODE / モード</span>
+      <div class="mode-grid">
+        <button class="mode-btn selected" id="modeFlash" onclick="selectMode('flash')">
+          <span class="mode-icon">🃏</span>
+          フラッシュカード
+          <span class="mode-sub">Tap to flip</span>
+        </button>
+        <button class="mode-btn" id="modeType" onclick="selectMode('type')">
+          <span class="mode-icon">⌨️</span>
+          タイピング
+          <span class="mode-sub">Type the answer</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="setup-panel">
+      <span class="setup-label">🔢 HOW MANY WORDS? / 何単語？</span>
+      <div class="count-grid">
+        <button class="count-btn selected" onclick="selectCount(10)">10</button>
+        <button class="count-btn" onclick="selectCount(20)">20</button>
+        <button class="count-btn" onclick="selectCount(30)">ALL<br><span style="font-size:6px">(24)</span></button>
+        <button class="count-btn" onclick="selectCount(99)">🔀<br><span style="font-size:6px">SHUFFLE</span></button>
+      </div>
+    </div>
+
+    <button class="start-btn" id="startBtn" onclick="startSession()">▶ START!</button>
+  </div>
+
+  <!-- ══ FLASH CARD SCREEN ══ -->
+  <div class="screen" id="flashScreen">
+    <div class="prog-row">
+      <div class="prog-bar"><div class="prog-fill" id="flashProgFill" style="width:0%"></div></div>
+      <div class="prog-label" id="flashProgLabel">1 / 10</div>
+    </div>
+    <div class="score-row">
+      <div class="score-pill cor" id="flashKnow">✓ 0</div>
+      <div class="score-pill tot" id="flashRemain">⟳ 0</div>
+      <div class="score-pill wrn" id="flashAgain">✗ 0</div>
+    </div>
+
+    <div class="card-wrap" id="cardWrap" onclick="flipCard()">
+      <div class="card-inner" id="cardInner">
+        <div class="card-face card-front">
+          <div class="card-tag">🇯🇵 JAPANESE / 日本語</div>
+          <div class="card-word" id="cardJP">—</div>
+          <div class="card-tap-hint">TAP TO REVEAL ▼</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-tag">🇬🇧 ENGLISH / 英語</div>
+          <div class="card-word" id="cardEN">—</div>
+          <div class="card-hint" id="cardHint"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-nav">
+      <button class="nav-btn again" id="btnAgain" onclick="markCard(false)" disabled>✗ もう一度<br><span style="font-size:7px;opacity:0.7">Again</span></button>
+      <button class="nav-btn know" id="btnKnow" onclick="markCard(true)" disabled>✓ わかった！<br><span style="font-size:7px;opacity:0.7">Got it</span></button>
+    </div>
+
+    <button class="btn-secondary" onclick="goSetup()">← 設定に戻る / Back to setup</button>
+  </div>
+
+  <!-- ══ TYPING SCREEN ══ -->
+  <div class="screen" id="typeScreen">
+    <div class="prog-row">
+      <div class="prog-bar"><div class="prog-fill" id="typeProgFill" style="width:0%"></div></div>
+      <div class="prog-label" id="typeProgLabel">1 / 10</div>
+    </div>
+    <div class="score-row">
+      <div class="score-pill cor" id="typeScore">✓ 0</div>
+      <div class="score-pill wrn" id="typeWrong">✗ 0</div>
+      <div class="score-pill tot" id="typeStreak">🔥 0</div>
+    </div>
+
+    <div class="type-card">
+      <div class="type-tag">🇯🇵 TYPE THE ENGLISH WORD</div>
+      <div class="type-word" id="typeWord">—</div>
+      <div class="type-num" id="typeNum"></div>
+    </div>
+
+    <div class="input-row">
+      <input class="type-input" id="typeInput" type="text" placeholder="type here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeydown="handleTypeKey(event)">
+      <button class="submit-btn" id="submitBtn" onclick="submitType()">CHECK</button>
+    </div>
+
+    <div class="feedback-box" id="typeFeedback"></div>
+    <button class="next-btn" id="typeNextBtn" onclick="typeNext()">NEXT WORD ▶</button>
+
+    <button class="btn-secondary" style="margin-top:8px" onclick="goSetup()">← 設定に戻る / Back to setup</button>
+  </div>
+
+  <!-- ══ RESULT SCREEN ══ -->
+  <div class="screen" id="resultScreen">
+    <div class="result-wrap">
+      <span class="result-emoji" id="resultEmoji">🏆</span>
+      <div class="result-title" id="resultTitle">—</div>
+      <div class="result-sub" id="resultSub">—</div>
+
+      <div class="result-stats">
+        <div class="r-stat">
+          <span class="r-val" id="rCorrect" style="color:var(--correct)">0</span>
+          <div class="r-label">正解 / Correct</div>
+        </div>
+        <div class="r-stat">
+          <span class="r-val" id="rWrong" style="color:var(--wrong)">0</span>
+          <div class="r-label">不正解 / Wrong</div>
+        </div>
+        <div class="r-stat">
+          <span class="r-val" id="rPct" style="color:var(--accent4)">0%</span>
+          <div class="r-label">正答率 / Accuracy</div>
+        </div>
+        <div class="r-stat">
+          <span class="r-val" id="rStreak" style="color:var(--accent3)">0</span>
+          <div class="r-label">最大連続 / Best Streak</div>
+        </div>
+      </div>
+
+      <div id="missedBlock" style="display:none">
+        <div class="missed-block">
+          <div class="missed-title">❌ 要復習 / Review These</div>
+          <div id="missedList"></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="retryBtn" onclick="retrySession()">🔄 もう一度！/ RETRY</button>
+      <button class="btn-secondary" onclick="goSetup()">⚙️ 設定に戻る / BACK TO SETUP</button>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ===== VOCABULARY DATA — New Crown 2 Lesson 1 =====
+const VOCAB = [
+  { jp: '…の前に（の）',     en: 'before' },
+  { jp: '写真撮影',           en: 'photography' },
+  { jp: 'そのとおり。',       en: "That's right." },
+  { jp: '記事',               en: 'article' },
+  { jp: '勝ち抜き戦、トーナメント', en: 'tournament' },
+  { jp: '混雑した',           en: 'crowded' },
+  { jp: '合唱',               en: 'chorus' },
+  { jp: '代わりに',           en: 'instead' },
+  { jp: '早い',               en: 'early' },
+  { jp: '分',                 en: 'minute' },
+  { jp: '選択',               en: 'choice' },
+  { jp: 'キャンセル、中止する', en: 'cancel' },
+  { jp: '…に対抗して',       en: 'against' },
+  { jp: '最後の',             en: 'final' },
+  { jp: '（時間の）秒',       en: 'second' },
+  { jp: '確かに、きっと',     en: 'surely' },
+  { jp: '競技会',             en: 'competition' },
+  { jp: '詩',                 en: 'poem' },
+  { jp: '広げる',             en: 'spread' },
+  { jp: '…まで（ずっと）',   en: 'until' },
+  { jp: '半分の',             en: 'half' },
+  { jp: '1時間',              en: 'hour' },
+  { jp: '負ける',             en: 'lose' },
+  { jp: 'こわす',             en: 'break' },
+];
+
+// ===== STATE =====
+let cfg = { mode: 'flash', count: 10 };
+let session = {};
+
+// ===== HELPERS =====
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function flash(type) {
+  const el = document.getElementById('dmgFlash');
+  el.className = `damage-flash ${type} show`;
+  setTimeout(() => el.classList.remove('show'), 200);
+}
+
+// ===== SETUP =====
+function selectMode(m) {
+  cfg.mode = m;
+  document.getElementById('modeFlash').classList.toggle('selected', m === 'flash');
+  document.getElementById('modeType').classList.toggle('selected', m === 'type');
+}
+
+function selectCount(n) {
+  cfg.count = n;
+  document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
+  event.target.closest('.count-btn').classList.add('selected');
+}
+
+function startSession() {
+  const pool = shuffle(VOCAB);
+  const words = cfg.count >= 99 ? pool : pool.slice(0, Math.min(cfg.count, VOCAB.length));
+  session = {
+    words,
+    index: 0,
+    correct: 0,
+    wrong: 0,
+    streak: 0,
+    bestStreak: 0,
+    missed: [],
+    // flashcard specific
+    knowCount: 0,
+    againCount: 0,
+    againQueue: [],
+    flipped: false,
+    // typing specific
+    answered: false,
+  };
+  if (cfg.mode === 'flash') startFlash();
+  else startType();
+}
+
+function goSetup() {
+  showScreen('setupScreen');
+}
+
+// ===== FLASH CARD MODE =====
+function startFlash() {
+  showScreen('flashScreen');
+  session.queue = [...session.words]; // remaining cards
+  renderFlashCard();
+}
+
+function renderFlashCard() {
+  const q = session.queue[0];
+  if (!q) { showResult(); return; }
+
+  session.flipped = false;
+  const inner = document.getElementById('cardInner');
+  inner.classList.remove('flipped');
+
+  document.getElementById('cardJP').textContent = q.jp;
+  document.getElementById('cardEN').textContent = q.en;
+  document.getElementById('cardHint').textContent = '';
+
+  // progress
+  const done = session.words.length - session.queue.length + session.againQueue.length;
+  // simplify: progress by knowCount
+  const pct = Math.round(session.knowCount / session.words.length * 100);
+  document.getElementById('flashProgFill').style.width = pct + '%';
+  document.getElementById('flashProgLabel').textContent = `${session.knowCount} / ${session.words.length}`;
+  document.getElementById('flashKnow').textContent = `✓ ${session.knowCount}`;
+  document.getElementById('flashAgain').textContent = `✗ ${session.againCount}`;
+  document.getElementById('flashRemain').textContent = `⟳ ${session.queue.length}`;
+
+  // disable nav until flipped
+  document.getElementById('btnKnow').disabled = true;
+  document.getElementById('btnAgain').disabled = true;
+}
+
+function flipCard() {
+  if (session.flipped) return;
+  session.flipped = true;
+  document.getElementById('cardInner').classList.add('flipped');
+  document.getElementById('btnKnow').disabled = false;
+  document.getElementById('btnAgain').disabled = false;
+}
+
+function markCard(knew) {
+  if (!session.flipped) return;
+  const card = session.queue.shift();
+  if (knew) {
+    session.knowCount++;
+    flash('cor-flash');
+  } else {
+    session.againCount++;
+    session.queue.push(card); // push to end to retry
+    flash('wrn-flash');
+  }
+  // if all done (queue empty)
+  if (session.queue.length === 0) {
+    session.correct = session.knowCount;
+    session.wrong = session.againCount;
+    showResult();
+  } else {
+    renderFlashCard();
+  }
+}
+
+// ===== TYPING MODE =====
+function startType() {
+  showScreen('typeScreen');
+  session.index = 0;
+  session.answered = false;
+  renderTypeCard();
+}
+
+function renderTypeCard() {
+  const q = session.words[session.index];
+  if (!q) { showResult(); return; }
+
+  session.answered = false;
+
+  document.getElementById('typeWord').textContent = q.jp;
+  document.getElementById('typeNum').textContent = `${session.index + 1} / ${session.words.length}`;
+
+  const pct = Math.round(session.index / session.words.length * 100);
+  document.getElementById('typeProgFill').style.width = pct + '%';
+  document.getElementById('typeProgLabel').textContent = `${session.index + 1} / ${session.words.length}`;
+  document.getElementById('typeScore').textContent = `✓ ${session.correct}`;
+  document.getElementById('typeWrong').textContent = `✗ ${session.wrong}`;
+  document.getElementById('typeStreak').textContent = `🔥 ${session.streak}`;
+
+  const input = document.getElementById('typeInput');
+  input.value = '';
+  input.className = 'type-input';
+  input.disabled = false;
+  input.focus();
+
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('typeFeedback').className = 'feedback-box';
+  document.getElementById('typeFeedback').textContent = '';
+  document.getElementById('typeNextBtn').className = 'next-btn';
+}
+
+function handleTypeKey(e) {
+  if (e.key === 'Enter') {
+    if (!session.answered) submitType();
+    else typeNext();
+  }
+}
+
+function submitType() {
+  if (session.answered) return;
+  const q = session.words[session.index];
+  const input = document.getElementById('typeInput');
+  const given = input.value.trim();
+  if (!given) return;
+
+  session.answered = true;
+  input.disabled = true;
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('typeNextBtn').className = 'next-btn visible';
+
+  const correct = q.en.toLowerCase();
+  const isOk = given.toLowerCase() === correct;
+
+  const fb = document.getElementById('typeFeedback');
+  if (isOk) {
+    input.classList.add('correct');
+    fb.className = 'feedback-box ok';
+    fb.textContent = `✓ Correct! "${q.en}"`;
+    session.correct++;
+    session.streak++;
+    session.bestStreak = Math.max(session.bestStreak, session.streak);
+    flash('cor-flash');
+  } else {
+    input.classList.add('wrong');
+    fb.className = 'feedback-box ng';
+    fb.textContent = `✗ The answer is "${q.en}"`;
+    session.wrong++;
+    session.streak = 0;
+    session.missed.push({ jp: q.jp, en: q.en });
+    flash('wrn-flash');
+  }
+
+  document.getElementById('typeScore').textContent = `✓ ${session.correct}`;
+  document.getElementById('typeWrong').textContent = `✗ ${session.wrong}`;
+  document.getElementById('typeStreak').textContent = `🔥 ${session.streak}`;
+}
+
+function typeNext() {
+  session.index++;
+  if (session.index >= session.words.length) showResult();
+  else renderTypeCard();
+}
+
+// ===== RESULT =====
+function showResult() {
+  const total = session.words.length;
+  const correct = session.correct;
+  const wrong = cfg.mode === 'flash' ? session.againCount : session.wrong;
+  const pct = Math.round(correct / total * 100);
+
+  let emoji, title;
+  if (pct === 100)      { emoji = '🌟'; title = '満点！PERFECT!'; }
+  else if (pct >= 80)   { emoji = '🏆'; title = 'すごい！GREAT!'; }
+  else if (pct >= 60)   { emoji = '⚗️'; title = 'よくやった！GOOD!'; }
+  else                  { emoji = '📖'; title = '要復習！KEEP STUDYING!'; }
+
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultSub').textContent = cfg.mode === 'flash'
+    ? `フラッシュカード / ${total} cards`
+    : `タイピング / ${total} words`;
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rPct').textContent = pct + '%';
+  document.getElementById('rStreak').textContent = session.bestStreak || '—';
+
+  if (session.missed.length > 0 && cfg.mode === 'type') {
+    document.getElementById('missedBlock').style.display = 'block';
+    document.getElementById('missedList').innerHTML = session.missed.map(m =>
+      `<div class="missed-row"><span class="missed-jp">${m.jp}</span><span class="missed-en">${m.en}</span></div>`
+    ).join('');
+  } else {
+    document.getElementById('missedBlock').style.display = 'none';
+  }
+
+  showScreen('resultScreen');
+}
+
+function retrySession() {
+  startSession();
+}
+</script>
+</body>
+</html>
