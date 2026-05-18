@@ -211,6 +211,33 @@
 
   .screen { display: none; }
   .screen.active { display: block; }
+
+  /* CHOICE QUESTIONS */
+  .choices { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+  .ch-btn {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel2);
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--text);
+    text-align: left;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    width: 100%;
+    transition: background .1s, border-color .1s;
+    line-height: 1.6;
+    font-weight: 700;
+  }
+  .ch-btn:hover:not(:disabled) { background: rgba(255,170,0,0.07); border-color: var(--accent); }
+  .ch-btn .cn { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--text-dim); min-width: 18px; flex-shrink: 0; padding-top: 3px; }
+  .ch-btn.cor { background: rgba(0,255,204,0.08); border-color: var(--correct); color: var(--correct); }
+  .ch-btn.cor .cn { color: var(--correct); }
+  .ch-btn.wrn { background: rgba(255,68,136,0.08); border-color: var(--wrong); color: var(--wrong); }
+  .ch-btn.wrn .cn { color: var(--wrong); }
+  .ch-btn:disabled { cursor: default; }
+
 </style>
 </head>
 <body>
@@ -245,8 +272,11 @@
       <button class="stab" style="width:100%;border-radius:4px;padding:14px 16px;text-align:left;margin-bottom:10px;font-size:13px" onclick="startQuiz('7')">
         ⑦ 戦国大名の登場（問19〜27）
       </button>
-      <button class="stab" style="width:100%;border-radius:4px;padding:14px 16px;text-align:left;font-size:13px" onclick="startQuiz('8')">
+      <button class="stab" style="width:100%;border-radius:4px;padding:14px 16px;text-align:left;margin-bottom:10px;font-size:13px" onclick="startQuiz('8')">
         ⑧ 室町文化とその広がり（問28〜35）
+      </button>
+      <button class="stab" style="width:100%;border-radius:4px;padding:14px 16px;text-align:left;border-color:var(--accent4);color:var(--accent4);font-size:13px" onclick="startQuiz('c')">
+        🔵 選択問題チャレンジ（15問）
       </button>
     </div>
   </div>
@@ -513,13 +543,108 @@ const ALL_QUESTIONS = [
   },
 ];
 
+const CHOICE_QUESTIONS = [
+  {
+    sec: 'c',
+    q: '琉球王国が栄えた理由として最も正しいものはどれですか？',
+    ch: ['金や銀を大量に産出したから', '日本・中国・朝鮮・東南アジアを結ぶ中継貿易で栄えたから', '農業が盛んで米を大量に輸出したから', '強力な軍隊で周辺の国々を征服したから'],
+    ans: 1
+  },
+  {
+    sec: 'c',
+    q: 'アイヌの人々が和人と交易していた北海道南部の拠点を何といいますか？',
+    ch: ['グスク', '館（たて）', '城下町', '惣（そう）'],
+    ans: 1
+  },
+  {
+    sec: 'c',
+    q: '14世紀に中国でモンゴル民族を退けて建国した国はどれですか？',
+    ch: ['元（げん）', '宋（そう）', '明（みん）', '清（しん）'],
+    ans: 2
+  },
+  {
+    sec: 'c',
+    q: '室町時代、農村で農民が中心となってつくった自治組織を何といいますか？',
+    ch: ['座（ざ）', '惣（そう）', '館（たて）', '城下町'],
+    ans: 1
+  },
+  {
+    sec: 'c',
+    q: '室町時代に同業者がつくった組合で、貴族や寺社の保護を受けて販売を独占したものを何といいますか？',
+    ch: ['惣（そう）', '土一揆', '座（ざ）', '定期市'],
+    ans: 2
+  },
+  {
+    sec: 'c',
+    q: '室町時代、農民が領主に年貢の軽減などを求めて武装蜂起した動きを何といいますか？',
+    ch: ['一向一揆', '土一揆（つちいっき）', '下剋上', '国一揆'],
+    ans: 1
+  },
+  {
+    sec: 'c',
+    q: '応仁の乱のあと登場した、実力で領国を支配した新しい支配者を何といいますか？',
+    ch: ['守護大名', '関白', '戦国大名', '管領'],
+    ans: 2
+  },
+  {
+    sec: 'c',
+    q: '戦国大名が国を支配するために定めた独自の法令を何といいますか？',
+    ch: ['律令（りつりょう）', '武家諸法度', '分国法（ぶんこくほう）', '御成敗式目'],
+    ans: 2
+  },
+  {
+    sec: 'c',
+    q: '戦国大名が城の周辺に家来や商工業者を集めてつくった都市を何といいますか？',
+    ch: ['門前町', '城下町（じょうかまち）', '港町', '宿場町'],
+    ans: 1
+  },
+  {
+    sec: 'c',
+    q: '「家来が主人に打ち勝つ」室町・戦国時代の風潮を何といいますか？',
+    ch: ['一向一揆', '土一揆', '下剋上（げこくじょう）', '応仁の乱'],
+    ans: 2
+  },
+  {
+    sec: 'c',
+    q: '足利義満が建てた、北山文化を代表する建築物はどれですか？',
+    ch: ['銀閣', '東大寺', '金閣（きんかく）', '法隆寺'],
+    ans: 2
+  },
+  {
+    sec: 'c',
+    q: '室町時代に禅宗の影響で発達した、墨一色で自然を表現する絵画を何といいますか？',
+    ch: ['大和絵（やまとえ）', '水墨画（すいぼくが）', '浮世絵（うきよえ）', '絵巻物（えまきもの）'],
+    ans: 1
+  },
+  {
+    sec: 'c',
+    q: '明に渡って水墨画を学び、日本の風景をえがいた禅宗の僧は誰ですか？',
+    ch: ['一休宗純', '雪舟（せっしゅう）', '世阿弥', '行基'],
+    ans: 1
+  },
+  {
+    sec: 'c',
+    q: '能の合間に演じられた、民衆の生活を表した喜劇を何といいますか？',
+    ch: ['歌舞伎（かぶき）', '人形浄瑠璃', '狂言（きょうげん）', '田楽（でんがく）'],
+    ans: 2
+  },
+  {
+    sec: 'c',
+    q: '石見銀山（島根県）で産出された大量の銀はどの国に輸出されましたか？',
+    ch: ['朝鮮', '東南アジア', '中国（明）', 'ヨーロッパ'],
+    ans: 2
+  },
+];
+
 let currentSection = 'all';
 let currentQs = [];
 let state = {};
 
 function startQuiz(sec) {
   currentSection = sec;
-  currentQs = sec === 'all' ? ALL_QUESTIONS : ALL_QUESTIONS.filter(q => q.sec === sec);
+  if (sec === 'all') currentQs = [...ALL_QUESTIONS, ...CHOICE_QUESTIONS];
+  else if (sec === 'c') currentQs = CHOICE_QUESTIONS;
+  else currentQs = ALL_QUESTIONS.filter(q => q.sec === sec);
   state = {
     answers: {},
     hints: {},
@@ -529,7 +654,7 @@ function startQuiz(sec) {
     finished: false,
   };
 
-  const badges = { all: '全35問', '5': 'セクション⑤（9問）', '6': 'セクション⑥（9問）', '7': 'セクション⑦（9問）', '8': 'セクション⑧（8問）' };
+  const badges = { all: '全50問', '5': 'セクション⑤（9問）', '6': 'セクション⑥（9問）', '7': 'セクション⑦（9問）', '8': 'セクション⑧（8問）', c: '選択問題（15問）' };
   document.getElementById('quizBadge').textContent = badges[sec] || '';
 
   showScreen('quizScreen');
@@ -542,22 +667,42 @@ function renderQuestions() {
 
   currentQs.forEach((q, i) => {
     const d = state.answers[i];
-    html += `
-      <div class="qblock" id="qblock${i}">
-        <div class="qnum">問 ${i + 1} / ${currentQs.length}</div>
-        <div class="qtext">${q.q}</div>
-        <div class="ans-wrap">
-          <input class="ans-input" id="input${i}" type="text" placeholder="答えを書いてください…"
-            autocomplete="off" autocorrect="off" spellcheck="false"
-            onkeydown="handleKey(event,${i})"
-            ${d ? 'disabled' : ''}>
-          <button class="check-btn" id="checkBtn${i}" onclick="checkAnswer(${i})" ${d ? 'disabled' : ''}>確認</button>
+    const nums = ['①','②','③','④'];
+    if (q.ch) {
+      // Choice question
+      html += `
+        <div class="qblock" id="qblock${i}">
+          <div class="qnum">問 ${i + 1} / ${currentQs.length} <span style="color:var(--accent4);font-size:7px">選択式</span></div>
+          <div class="qtext">${q.q}</div>
+          <div class="choices">
+            ${q.ch.map((c, ci) => `
+              <button class="ch-btn${d ? (ci === q.ans ? ' cor' : ci === d.picked && d.picked !== q.ans ? ' wrn' : '') : ''}"
+                onclick="pickChoice(${i}, ${ci})" ${d ? 'disabled' : ''}>
+                <span class="cn">${nums[ci]}</span>${c}
+              </button>`).join('')}
+          </div>
+          <div class="feedback" id="fb${i}"></div>
         </div>
-        <div class="feedback" id="fb${i}"></div>
-        <button class="hint-btn" id="hintBtn${i}" onclick="showHint(${i})">💡 ヒントを見る</button>
-        <div class="hint-text" id="hint${i}">${q.hint}</div>
-      </div>
-      ${i < currentQs.length - 1 ? '<hr class="divider">' : ''}`;
+        ${i < currentQs.length - 1 ? '<hr class="divider">' : ''}`;
+    } else {
+      // Free-text question
+      html += `
+        <div class="qblock" id="qblock${i}">
+          <div class="qnum">問 ${i + 1} / ${currentQs.length} <span style="color:var(--accent3);font-size:7px">記述式</span></div>
+          <div class="qtext">${q.q}</div>
+          <div class="ans-wrap">
+            <input class="ans-input" id="input${i}" type="text" placeholder="答えを書いてください…"
+              autocomplete="off" autocorrect="off" spellcheck="false"
+              onkeydown="handleKey(event,${i})"
+              ${d ? 'disabled' : ''}>
+            <button class="check-btn" id="checkBtn${i}" onclick="checkAnswer(${i})" ${d ? 'disabled' : ''}>確認</button>
+          </div>
+          <div class="feedback" id="fb${i}"></div>
+          <button class="hint-btn" id="hintBtn${i}" onclick="showHint(${i})">💡 ヒントを見る</button>
+          <div class="hint-text" id="hint${i}">${q.hint}</div>
+        </div>
+        ${i < currentQs.length - 1 ? '<hr class="divider">' : ''}`;
+    }
   });
 
   area.innerHTML = html;
@@ -566,6 +711,42 @@ function renderQuestions() {
 
 function handleKey(e, i) {
   if (e.key === 'Enter') checkAnswer(i);
+}
+
+function pickChoice(i, ci) {
+  const q = currentQs[i];
+  if (state.answers[i]) return;
+  state.answers[i] = { picked: ci };
+  const isOk = ci === q.ans;
+  if (isOk) { state.correct++; }
+  else { state.wrong++; state.missed.push({ q: q.q, a: q.ch[q.ans] }); }
+
+  // Re-render just this question's buttons
+  const buttons = document.querySelectorAll(`#qblock${i} .ch-btn`);
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === q.ans) btn.classList.add('cor');
+    else if (idx === ci && !isOk) btn.classList.add('wrn');
+  });
+  const fb = document.getElementById('fb' + i);
+  if (isOk) { fb.className = 'feedback ok'; fb.textContent = '✓ 正解！'; }
+  else { fb.className = 'feedback ng'; fb.textContent = '✗ 不正解。正しい答えは「' + q.ch[q.ans] + '」'; }
+
+  updateProgress();
+  if (Object.keys(state.answers).length === currentQs.length) {
+    document.getElementById('finishBtn').style.display = 'block';
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
+  // auto-advance to next unanswered
+  for (let j = i + 1; j < currentQs.length; j++) {
+    if (!state.answers[j]) {
+      setTimeout(() => {
+        const next = document.getElementById('qblock' + j);
+        if (next) next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+      break;
+    }
+  }
 }
 
 function checkAnswer(i) {
