@@ -600,7 +600,7 @@ function selectCount(n) {
 function startSession() {
   const vocabMap = { L1: VOCAB_L1, L2: VOCAB_L2, ALL: VOCAB_ALL };
   const pool = shuffle(vocabMap[cfg.lesson] || VOCAB_L1);
-  const words = cfg.count >= 99 ? pool : pool.slice(0, Math.min(cfg.count, VOCAB.length));
+  const words = cfg.count >= 99 ? pool : pool.slice(0, Math.min(cfg.count, pool.length));
   session = {
     words,
     index: 0,
