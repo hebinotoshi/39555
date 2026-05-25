@@ -348,15 +348,10 @@
           Lesson 2
           <span class="mode-sub">32 words</span>
         </button>
-        <button class="mode-btn" id="lessonALL" onclick="selectLesson('ALL')">
+        <button class="mode-btn" id="lessonALL" onclick="selectLesson('ALL')" style="grid-column:span 2">
           <span class="mode-icon">🔀</span>
           両方 / Both Lessons
           <span class="mode-sub">56 words mixed</span>
-        </button>
-        <button class="mode-btn" id="lessonEIKEN" onclick="selectLesson('EIKEN')">
-          <span class="mode-icon">🎓</span>
-          Eiken Grade 3
-          <span class="mode-sub">65 extra words</span>
         </button>
       </div>
     </div>
@@ -560,78 +555,6 @@ const VOCAB_L2 = [
 
 const VOCAB_ALL = [...VOCAB_L1, ...VOCAB_L2];
 
-const VOCAB_EIKEN = [
-  { jp: '祝う', en: 'celebrate' },
-  { jp: '意味する', en: 'mean' },
-  { jp: '盗む', en: 'steal' },
-  { jp: 'においがする', en: 'smell' },
-  { jp: '貸す', en: 'lend' },
-  { jp: '借りる', en: 'borrow' },
-  { jp: '受け取る', en: 'receive' },
-  { jp: '説明する', en: 'explain' },
-  { jp: '改善する、上達する', en: 'improve' },
-  { jp: '発見する', en: 'discover' },
-  { jp: '比較する', en: 'compare' },
-  { jp: '続ける', en: 'continue' },
-  { jp: '集める', en: 'collect' },
-  { jp: '〜かなと思う', en: 'wonder' },
-  { jp: '気づく', en: 'realize' },
-  { jp: '顧客', en: 'customer' },
-  { jp: '運動選手', en: 'athlete' },
-  { jp: '汚染', en: 'pollution' },
-  { jp: '環境', en: 'environment' },
-  { jp: '経験', en: 'experience' },
-  { jp: '助言', en: 'advice' },
-  { jp: '目的', en: 'purpose' },
-  { jp: '予定', en: 'schedule' },
-  { jp: '文化', en: 'culture' },
-  { jp: '世紀', en: 'century' },
-  { jp: '温度、気温', en: 'temperature' },
-  { jp: 'コンテスト', en: 'contest' },
-  { jp: 'ボランティア', en: 'volunteer' },
-  { jp: '結果', en: 'result' },
-  { jp: '違い', en: 'difference' },
-  { jp: '可能な', en: 'possible' },
-  { jp: '重い', en: 'heavy' },
-  { jp: '安い', en: 'cheap' },
-  { jp: '外国の', en: 'foreign' },
-  { jp: '快適な', en: 'comfortable' },
-  { jp: '必要な', en: 'necessary' },
-  { jp: '興味がある', en: 'interested' },
-  { jp: '驚いた', en: 'surprised' },
-  { jp: '寂しい', en: 'lonely' },
-  { jp: '一般的な', en: 'common' },
-  { jp: 'ほとんど', en: 'almost' },
-  { jp: '特に', en: 'especially' },
-  { jp: 'すでに', en: 'already' },
-  { jp: '最近', en: 'recently' },
-  { jp: 'たぶん', en: 'perhaps' },
-  { jp: 'しかしながら', en: 'however' },
-  { jp: '全体の', en: 'whole' },
-  { jp: '秋', en: 'fall' },
-  { jp: '〜だけれども', en: 'although' },
-  { jp: '海外で', en: 'abroad' },
-  { jp: '〜によろしく伝える', en: 'say hello to' },
-  { jp: 'まったくわからない', en: 'have no idea' },
-  { jp: '〜と友達になる', en: 'make friends with' },
-  { jp: '〜に折り返し電話する', en: 'call back' },
-  { jp: '困っている', en: 'be in trouble' },
-  { jp: '人前で', en: 'in public' },
-  { jp: '〜を片付ける', en: 'clean up' },
-  { jp: '少なくとも', en: 'at least' },
-  { jp: '〜の世話をする', en: 'take care of' },
-  { jp: '〜を卒業する', en: 'graduate from' },
-  { jp: '〜を楽しみにする', en: 'look forward to' },
-  { jp: '初めて', en: 'for the first time' },
-  { jp: '〜のために', en: 'because of' },
-  { jp: '〜の代わりに', en: 'instead of' },
-  { jp: 'たとえば', en: 'for example' },
-  { jp: '〜次第である', en: 'depend on' }
-];
-
-const VOCAB_ALL_EXTENDED = [...VOCAB_ALL, ...VOCAB_EIKEN];
-
-
 
 // ===== STATE =====
 let cfg = { mode: 'flash', count: 10, lesson: 'L1' };
@@ -659,7 +582,7 @@ function flash(type) {
 // ===== SETUP =====
 function selectLesson(l) {
   cfg.lesson = l;
-  ['L1','L2','ALL','EIKEN'].forEach(x => document.getElementById('lesson'+x).classList.toggle('selected', x === l));
+  ['L1','L2','ALL'].forEach(x => document.getElementById('lesson'+x).classList.toggle('selected', x === l));
 }
 
 function selectMode(m) {
@@ -675,7 +598,7 @@ function selectCount(n) {
 }
 
 function startSession() {
-  const vocabMap = { L1: VOCAB_L1, L2: VOCAB_L2, ALL: VOCAB_ALL, EIKEN: VOCAB_EIKEN, FULL: VOCAB_ALL_EXTENDED };
+  const vocabMap = { L1: VOCAB_L1, L2: VOCAB_L2, ALL: VOCAB_ALL };
   const pool = shuffle(vocabMap[cfg.lesson] || VOCAB_L1);
   const words = cfg.count >= 99 ? pool : pool.slice(0, Math.min(cfg.count, pool.length));
   session = {
@@ -746,23 +669,46 @@ function flipCard() {
 
 function markCard(knew) {
   if (!session.flipped) return;
+
+  const inner = document.getElementById('cardInner');
+
+  // disable animation temporarily
+  inner.style.transition = 'none';
+
+  // instantly hide back face
+  inner.classList.remove('flipped');
+
+  // force repaint
+  void inner.offsetWidth;
+
+  session.flipped = false;
+
+  document.getElementById('btnKnow').disabled = true;
+  document.getElementById('btnAgain').disabled = true;
+
   const card = session.queue.shift();
+
   if (knew) {
     session.knowCount++;
     flash('cor-flash');
   } else {
     session.againCount++;
-    session.queue.push(card); // push to end to retry
+    session.queue.push(card);
     flash('wrn-flash');
   }
-  // if all done (queue empty)
-  if (session.queue.length === 0) {
-    session.correct = session.knowCount;
-    session.wrong = session.againCount;
-    showResult();
-  } else {
-    renderFlashCard();
-  }
+
+  requestAnimationFrame(() => {
+    // restore animation
+    inner.style.transition = 'transform 0.45s cubic-bezier(0.4,0,0.2,1)';
+
+    if (session.queue.length === 0) {
+      session.correct = session.knowCount;
+      session.wrong = session.againCount;
+      showResult();
+    } else {
+      renderFlashCard();
+    }
+  });
 }
 
 // ===== TYPING MODE =====
@@ -868,7 +814,7 @@ function showResult() {
 
   document.getElementById('resultEmoji').textContent = emoji;
   document.getElementById('resultTitle').textContent = title;
-  const lessonNames = { L1: 'Lesson 1', L2: 'Lesson 2', ALL: 'Lesson 1 & 2', EIKEN: 'Eiken Grade 3' };
+  const lessonNames = { L1: 'Lesson 1', L2: 'Lesson 2', ALL: 'Lesson 1 & 2' };
   const lName = lessonNames[cfg.lesson] || '';
   document.getElementById('resultSub').textContent = cfg.mode === 'flash'
     ? `フラッシュカード · ${lName} / ${total} cards`
