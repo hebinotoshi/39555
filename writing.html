@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英検3級 — Writing Practice</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0a0a1a;
+    --panel: #12122a;
+    --panel2: #1a1a3a;
+    --border: #3a3a7a;
+    --accent: #00ffcc;
+    --accent2: #ff4488;
+    --accent3: #ffdd00;
+    --accent4: #aa44ff;
+    --accent5: #ff8800;
+    --text: #e0e0ff;
+    --text-dim: #7070aa;
+    --correct: #00ffcc;
+    --wrong: #ff4488;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    padding-bottom: 60px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+    pointer-events: none; z-index: 1000;
+  }
+
+  .container { width: 100%; max-width: 700px; padding: 0 16px; position: relative; z-index: 1; }
+
+  .back-bar { padding: 14px 0 0; }
+  .back-link { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--text-dim); text-decoration: none; letter-spacing: 1px; transition: color 0.15s; }
+  .back-link:hover { color: var(--accent); }
+
+  .title-block { text-align: center; padding: 18px 0 20px; }
+  .title-jp { font-family: 'Press Start 2P', monospace; font-size: clamp(11px,3.5vw,15px); color: var(--accent); line-height: 1.8; animation: titlePulse 2s ease-in-out infinite alternate; }
+  @keyframes titlePulse { from{text-shadow:0 0 10px var(--accent)} to{text-shadow:0 0 20px var(--accent),0 0 40px var(--accent)} }
+  .title-en { font-family: 'Press Start 2P', monospace; font-size: clamp(7px,2vw,9px); color: var(--text-dim); letter-spacing: 3px; margin-top: 4px; }
+
+  /* TYPE TABS */
+  .type-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+  .ttab {
+    background: var(--panel2); border: 2px solid var(--border);
+    border-radius: 4px; padding: 14px 12px; cursor: pointer;
+    font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 700;
+    font-size: 13px; text-align: center; transition: all 0.15s; line-height: 1.5;
+  }
+  .ttab .tab-icon { font-size: 22px; display: block; margin-bottom: 5px; }
+  .ttab .tab-label { display: block; font-size: 12px; }
+  .ttab .tab-sub { display: block; font-size: 10px; color: var(--text-dim); margin-top: 2px; font-weight: 400; }
+  .ttab:hover { transform: translateY(-2px); }
+  .ttab.A { border-color: var(--accent); }
+  .ttab.A:hover, .ttab.A.active { background: rgba(0,255,204,0.1); box-shadow: 0 0 14px rgba(0,255,204,0.2); }
+  .ttab.B { border-color: var(--accent3); }
+  .ttab.B:hover, .ttab.B.active { background: rgba(255,221,0,0.08); box-shadow: 0 0 14px rgba(255,221,0,0.2); }
+  .ttab.C { border-color: var(--accent4); }
+  .ttab.C:hover, .ttab.C.active { background: rgba(170,68,255,0.08); box-shadow: 0 0 14px rgba(170,68,255,0.2); }
+  .ttab.D { border-color: var(--accent5); }
+  .ttab.D:hover, .ttab.D.active { background: rgba(255,136,0,0.08); box-shadow: 0 0 14px rgba(255,136,0,0.2); }
+  .ttab.active { transform: translateY(-2px); }
+
+  /* PROGRESS */
+  .prog-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .prog-bar { flex: 1; height: 5px; background: var(--panel2); border: 1px solid var(--border); border-radius: 99px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 99px; transition: width 0.4s; }
+  .prog-fill.A { background: var(--accent); }
+  .prog-fill.B { background: var(--accent3); }
+  .prog-fill.C { background: var(--accent4); }
+  .prog-fill.D { background: var(--accent5); }
+  .prog-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); white-space: nowrap; }
+
+  .score-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+  .score-pill { font-family: 'Press Start 2P', monospace; font-size: 7px; padding: 5px 10px; border-radius: 99px; border: 1px solid var(--border); background: var(--panel2); }
+  .score-pill.cor { color: var(--correct); border-color: rgba(0,255,204,0.3); }
+  .score-pill.wrn { color: var(--wrong); border-color: rgba(255,68,136,0.3); }
+
+  /* QUESTION BLOCKS */
+  .qblock { background: var(--panel); border: 2px solid var(--border); border-radius: 4px; padding: 18px 16px; margin-bottom: 16px; }
+  .qnum { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); margin-bottom: 10px; letter-spacing: 1px; }
+  .qtype-badge { display: inline-block; font-family: 'Press Start 2P', monospace; font-size: 7px; padding: 3px 8px; border-radius: 4px; margin-bottom: 10px; }
+  .qtype-badge.A { background: rgba(0,255,204,0.1); color: var(--accent); border: 1px solid rgba(0,255,204,0.3); }
+  .qtype-badge.B { background: rgba(255,221,0,0.1); color: var(--accent3); border: 1px solid rgba(255,221,0,0.3); }
+  .qtype-badge.C { background: rgba(170,68,255,0.1); color: var(--accent4); border: 1px solid rgba(170,68,255,0.3); }
+  .qtype-badge.D { background: rgba(255,136,0,0.1); color: var(--accent5); border: 1px solid rgba(255,136,0,0.3); }
+
+  .qinstruction { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; line-height: 1.6; }
+  .qtext { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.8; margin-bottom: 14px; }
+  .word-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; min-height: 44px; }
+  .chip {
+    background: var(--panel2); border: 1.5px solid var(--accent); border-radius: 4px;
+    padding: 7px 13px; font-size: 14px; font-weight: 700; color: var(--accent);
+    font-family: 'M PLUS Rounded 1c', sans-serif; cursor: pointer; transition: all 0.12s;
+    user-select: none;
+  }
+  .chip:hover { background: rgba(0,255,204,0.1); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,255,204,0.2); }
+  .chip.used { opacity: 0.2; cursor: default; pointer-events: none; transform: none; box-shadow: none; }
+
+  .answer-slots {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+    min-height: 50px; padding: 8px; background: var(--panel2);
+    border: 2px dashed var(--border); border-radius: 4px;
+  }
+  .answer-slots.has-words { border-color: var(--accent); border-style: solid; }
+  .slot-chip {
+    background: rgba(0,255,204,0.1); border: 1.5px solid var(--accent); border-radius: 4px;
+    padding: 7px 13px; font-size: 14px; font-weight: 700; color: var(--accent);
+    font-family: 'M PLUS Rounded 1c', sans-serif; cursor: pointer; transition: all 0.12s;
+    user-select: none;
+  }
+  .slot-chip:hover { background: rgba(255,68,136,0.1); border-color: var(--wrong); color: var(--wrong); }
+  .slot-placeholder { font-size: 12px; color: var(--text-dim); align-self: center; font-style: italic; }
+  .chip-area-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 1px; }
+
+  /* INPUTS */
+  .ans-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .ans-input {
+    flex: 1; background: var(--panel2); border: 2px solid var(--border);
+    color: var(--text); padding: 11px 14px; border-radius: 4px;
+    font-family: 'M PLUS Rounded 1c', sans-serif; font-size: 15px; font-weight: 700;
+    outline: none; transition: border-color 0.15s;
+  }
+  .ans-input:focus { border-color: var(--accent); }
+  .ans-input.correct { border-color: var(--correct); background: rgba(0,255,204,0.06); color: var(--correct); }
+  .ans-input.wrong { border-color: var(--wrong); background: rgba(255,68,136,0.06); }
+  .ans-input:disabled { opacity: 0.85; cursor: default; }
+  .ans-textarea {
+    width: 100%; background: var(--panel2); border: 2px solid var(--border);
+    color: var(--text); padding: 12px 14px; border-radius: 4px;
+    font-family: 'M PLUS Rounded 1c', sans-serif; font-size: 15px; font-weight: 700;
+    outline: none; resize: vertical; min-height: 90px; line-height: 1.6;
+    transition: border-color 0.15s; margin-bottom: 10px;
+  }
+  .ans-textarea:focus { border-color: var(--accent4); }
+  .ans-textarea:disabled { opacity: 0.85; cursor: default; }
+
+  .check-btn {
+    background: var(--accent); color: #000; border: none;
+    padding: 11px 16px; font-family: 'Press Start 2P', monospace; font-size: 8px;
+    cursor: pointer; border-radius: 4px; transition: all 0.12s; white-space: nowrap;
+    box-shadow: 0 3px 0 rgba(0,180,140,0.4);
+  }
+  .check-btn.B { background: var(--accent3); box-shadow: 0 3px 0 rgba(180,150,0,0.4); }
+  .check-btn.C { background: var(--accent4); color: #fff; box-shadow: 0 3px 0 rgba(100,0,200,0.4); }
+  .check-btn.D { background: var(--accent5); box-shadow: 0 3px 0 rgba(180,80,0,0.4); }
+  .check-btn:hover:not(:disabled) { transform: translateY(-1px); }
+  .check-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+  .feedback { font-size: 13px; line-height: 1.6; padding: 10px 14px; border-radius: 4px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: rgba(0,255,204,0.08); color: var(--correct); border: 1px solid rgba(0,255,204,0.3); }
+  .feedback.ng { display: block; background: rgba(255,68,136,0.08); color: var(--wrong); border: 1px solid rgba(255,68,136,0.3); }
+  .feedback.info { display: block; background: rgba(170,68,255,0.08); color: var(--accent4); border: 1px solid rgba(170,68,255,0.3); }
+
+  /* model answer reveal */
+  .model-btn { background: transparent; border: 1.5px solid var(--text-dim); color: var(--text-dim); padding: 5px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; font-family: 'M PLUS Rounded 1c', sans-serif; transition: all 0.12s; margin-top: 8px; }
+  .model-btn:hover { border-color: var(--accent4); color: var(--accent4); }
+  .model-answer { font-size: 13px; color: var(--accent4); margin-top: 8px; padding: 10px 14px; background: rgba(170,68,255,0.06); border: 1px solid rgba(170,68,255,0.3); border-radius: 4px; display: none; line-height: 1.7; }
+  .model-answer.visible { display: block; }
+
+  /* RESULT */
+  .result-wrap { text-align: center; padding: 20px 0; }
+  .result-emoji { font-size: 70px; display: block; margin-bottom: 12px; animation: rb 0.5s; }
+  @keyframes rb { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .result-title { font-family: 'Press Start 2P', monospace; font-size: clamp(10px,3vw,14px); margin-bottom: 8px; line-height: 1.8; }
+  .result-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 18px; }
+  .result-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .r-stat { background: var(--panel2); border: 1px solid var(--border); border-radius: 4px; padding: 12px; text-align: center; }
+  .r-val { font-family: 'Press Start 2P', monospace; font-size: 20px; display: block; margin-bottom: 4px; }
+  .r-label { font-size: 10px; color: var(--text-dim); }
+
+  .btn-primary { display:block;width:100%;border:none;padding:14px;font-family:'Press Start 2P',monospace;font-size:10px;cursor:pointer;border-radius:4px;margin-bottom:10px;transition:all 0.15s; }
+  .btn-primary.A { background:var(--accent);color:#000;box-shadow:0 4px 0 rgba(0,180,140,0.4); }
+  .btn-primary.B { background:var(--accent3);color:#000;box-shadow:0 4px 0 rgba(180,150,0,0.4); }
+  .btn-primary.C { background:var(--accent4);color:#fff;box-shadow:0 4px 0 rgba(100,0,200,0.4); }
+  .btn-primary.D { background:var(--accent5);color:#000;box-shadow:0 4px 0 rgba(180,80,0,0.4); }
+  .btn-primary:hover { transform:translateY(-2px); }
+  .btn-secondary { display:block;width:100%;background:transparent;color:var(--text-dim);border:2px solid var(--border);padding:12px;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;border-radius:4px;margin-bottom:10px;transition:all 0.15s; }
+  .btn-secondary:hover { border-color:var(--text-dim);color:var(--text); }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .finish-btn { display:none;width:100%;border:none;padding:14px;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;border-radius:4px;margin-bottom:10px;transition:all 0.15s; }
+  .finish-btn.visible { display:block; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="back-bar"><a class="back-link" href="index.html">◀ BACK TO MENU</a></div>
+
+  <div class="title-block">
+    <div class="title-jp">✏️ ライティング練習</div>
+    <div class="title-en">EIKEN GRADE 3 — WRITING PRACTICE</div>
+  </div>
+
+  <!-- MENU -->
+  <div class="screen active" id="menuScreen">
+    <div class="type-tabs">
+      <button class="ttab A" onclick="startType('A')">
+        <span class="tab-icon">🔀</span>
+        <span class="tab-label">並び替え</span>
+        <span class="tab-sub">Type A · 20問</span>
+      </button>
+      <button class="ttab B" onclick="startType('B')">
+        <span class="tab-icon">📝</span>
+        <span class="tab-label">空欄補充</span>
+        <span class="tab-sub">Type B · 20問</span>
+      </button>
+      <button class="ttab C" onclick="startType('C')">
+        <span class="tab-icon">💬</span>
+        <span class="tab-label">英作文</span>
+        <span class="tab-sub">Type C · 20問</span>
+      </button>
+      <button class="ttab D" onclick="startType('D')">
+        <span class="tab-icon">🔧</span>
+        <span class="tab-label">語形変化</span>
+        <span class="tab-sub">Type D · 20問</span>
+      </button>
+    </div>
+    <div style="background:var(--panel);border:2px solid var(--border);border-radius:4px;padding:16px;font-size:13px;color:var(--text-dim);line-height:1.8;">
+      📌 英検3級レベルのライティング練習です。<br>
+      Type A: 単語を正しい順に並べる<br>
+      Type B: 空欄に適切な語を入れる<br>
+      Type C: 質問に英語で自由に答える<br>
+      Type D: 動詞などを正しい形に変える
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="screen" id="quizScreen">
+    <div class="score-row">
+      <div class="score-pill cor" id="scoreCorrect">✓ 0</div>
+      <div class="score-pill wrn" id="scoreWrong">✗ 0</div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <div class="prog-label" id="progLabel">0 / 20</div>
+    </div>
+    <div id="questionsArea"></div>
+    <button class="finish-btn" id="finishBtn" onclick="showResult()">📊 結果を見る</button>
+    <button class="btn-secondary" onclick="goMenu()">← タイプ選択へ戻る</button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="resultScreen">
+    <div class="result-wrap">
+      <span class="result-emoji" id="resultEmoji">🏆</span>
+      <div class="result-title" id="resultTitle">—</div>
+      <div class="result-sub" id="resultSub">—</div>
+      <div class="result-stats">
+        <div class="r-stat"><span class="r-val" id="rCorrect" style="color:var(--correct)">0</span><div class="r-label">正解</div></div>
+        <div class="r-stat"><span class="r-val" id="rWrong" style="color:var(--wrong)">0</span><div class="r-label">不正解</div></div>
+        <div class="r-stat"><span class="r-val" id="rPct" style="color:var(--accent)">0%</span><div class="r-label">正答率</div></div>
+      </div>
+      <button class="btn-primary" id="retryBtn" onclick="retryType()">🔄 もう一度！</button>
+      <button class="btn-secondary" onclick="goMenu()">← タイプ選択へ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// TYPE A — 並び替え (Word Order)
+// ═══════════════════════════════════════════
+const TYPE_A = [
+  { words: ['she', 'every', 'goes', 'morning', 'to', 'school'], answer: 'She goes to school every morning.', hint: '主語→動詞→場所→時間の順' },
+  { words: ['did', 'what', 'last', 'you', 'Sunday', 'do', '?'], answer: 'What did you do last Sunday?', hint: '疑問詞→助動詞→主語→動詞' },
+  { words: ['my', 'like', 'I', 'very', 'much', 'cat'], answer: 'I like my cat very much.', hint: '主語→動詞→目的語→副詞' },
+  { words: ['is', 'she', 'now', 'English', 'studying'], answer: 'She is studying English now.', hint: '現在進行形：be動詞＋〜ing' },
+  { words: ['yesterday', 'I', 'to', 'went', 'the', 'library'], answer: 'I went to the library yesterday.', hint: '主語→動詞（過去形）→場所→時間' },
+  { words: ['a', 'there', 'near', 'is', 'station', 'park', 'the'], answer: 'There is a park near the station.', hint: 'There is〜の文' },
+  { words: ['you', 'help', 'can', 'me', '?'], answer: 'Can you help me?', hint: '助動詞→主語→動詞→目的語' },
+  { words: ['his', 'dog', 'Tom', 'plays', 'with', 'every', 'day'], answer: 'Tom plays with his dog every day.', hint: '主語→動詞→前置詞句→時間' },
+  { words: ['does', 'what', 'your', 'do', 'father', '?'], answer: 'What does your father do?', hint: '職業を聞く表現' },
+  { words: ['been', 'I', 'have', 'to', 'never', 'Okinawa'], answer: 'I have never been to Okinawa.', hint: '現在完了形＋never' },
+  { words: ['flowers', 'she', 'beautiful', 'gave', 'me', 'some'], answer: 'She gave me some beautiful flowers.', hint: '第4文型：動詞→人→物' },
+  { words: ['taller', 'Ken', 'than', 'is', 'Mike'], answer: 'Ken is taller than Mike.', hint: '比較級＋than' },
+  { words: ['in', 'the', 'summer', 'swimming', 'I', 'enjoy'], answer: 'I enjoy swimming in the summer.', hint: 'enjoy＋動名詞（〜ing）' },
+  { words: ['any', 'do', 'brothers', 'have', 'you', '?'], answer: 'Do you have any brothers?', hint: '疑問文でsome→any' },
+  { words: ['to', 'I', 'be', 'want', 'a', 'doctor'], answer: 'I want to be a doctor.', hint: 'want to＋動詞の原形' },
+  { words: ['was', 'it', 'yesterday', 'cold', 'very'], answer: 'It was very cold yesterday.', hint: '天気・気温の表現' },
+  { words: ['he', 'when', 'did', 'arrive', '?'], answer: 'When did he arrive?', hint: '疑問詞when＋did' },
+  { words: ['happy', 'makes', 'music', 'me'], answer: 'Music makes me happy.', hint: '第5文型：make＋目的語＋形容詞' },
+  { words: ['for', 'she', 'has', 'years', 'three', 'piano', 'the', 'played'], answer: 'She has played the piano for three years.', hint: '現在完了形＋for' },
+  { words: ['is', 'who', 'girl', 'that', '?'], answer: 'Who is that girl?', hint: '疑問詞who＋be動詞' },
+];
+
+// ═══════════════════════════════════════════
+// TYPE B — 空欄補充 (Fill in the blank)
+// ═══════════════════════════════════════════
+const TYPE_B = [
+  { sentence: 'I am good ___ playing tennis.', jp: '私はテニスをするのが得意です。', answer: 'at', hint: 'good at〜：〜が得意' },
+  { sentence: 'She has lived here ___ five years.', jp: '彼女はここに5年間住んでいます。', answer: 'for', hint: '期間にはfor、起点にはsince' },
+  { sentence: 'He is interested ___ science.', jp: '彼は科学に興味があります。', answer: 'in', hint: 'interested in〜：〜に興味がある' },
+  { sentence: 'We arrived ___ the station at noon.', jp: '私たちは正午に駅に着きました。', answer: 'at', hint: '狭い場所にはat' },
+  { sentence: 'I have known her ___ we were children.', jp: '私たちが子どもの頃からずっと彼女のことを知っています。', answer: 'since', hint: '〜から（起点）はsince' },
+  { sentence: 'Please look ___ this picture.', jp: 'この写真を見てください。', answer: 'at', hint: 'look at〜：〜を見る' },
+  { sentence: 'She is ___ than her sister.', jp: '彼女はお姉さんより背が高いです。', answer: 'taller', hint: '2つを比べるときは比較級' },
+  { sentence: 'I will ___ to the park tomorrow.', jp: '明日、公園に行きます。', answer: 'go', hint: 'will＋動詞の原形' },
+  { sentence: 'He was born ___ June 5th.', jp: '彼は6月5日に生まれました。', answer: 'on', hint: '特定の日にはon' },
+  { sentence: 'They enjoyed ___ soccer after school.', jp: '彼らは放課後にサッカーを楽しみました。', answer: 'playing', hint: 'enjoy＋動名詞（〜ing）' },
+  { sentence: 'Can you tell me how ___ get there?', jp: 'そこへの行き方を教えてもらえますか？', answer: 'to', hint: '疑問詞＋to不定詞' },
+  { sentence: 'I ___ never eaten sushi before.', jp: '私は今まで一度も寿司を食べたことがありません。', answer: 'have', hint: '現在完了形：have/has＋過去分詞' },
+  { sentence: 'She went to bed ___ she finished her homework.', jp: '彼女は宿題を終えた後で寝ました。', answer: 'after', hint: '〜したあとで' },
+  { sentence: 'This is the most beautiful flower I ___ ever seen.', jp: 'これは私が今まで見た中で一番美しい花です。', answer: 'have', hint: '最上級と現在完了の組み合わせ' },
+  { sentence: 'He is listening to music ___ his room.', jp: '彼は自分の部屋で音楽を聴いています。', answer: 'in', hint: '部屋の中はin' },
+  { sentence: 'I am looking forward ___ seeing you.', jp: 'あなたに会うのを楽しみにしています。', answer: 'to', hint: 'look forward to＋動名詞' },
+  { sentence: 'Would you like ___ cup of tea?', jp: 'お茶を一杯いかがですか？', answer: 'a', hint: '数えられる名詞の前' },
+  { sentence: 'She was ___ tired that she fell asleep quickly.', jp: '彼女はとても疲れていたので、すぐに眠ってしまいました。', answer: 'so', hint: 'so〜that…：とても〜なので…' },
+  { sentence: 'My father gave ___ a present on my birthday.', jp: '父は私の誕生日にプレゼントをくれました。', answer: 'me', hint: '第4文型：give＋人＋物' },
+  { sentence: 'I practice the guitar ___ an hour every day.', jp: '私は毎日1時間ギターを練習します。', answer: 'for', hint: '時間の長さにはfor' },
+];
+
+// ═══════════════════════════════════════════
+// TYPE C — 英作文 (Free writing)
+// ═══════════════════════════════════════════
+const TYPE_C = [
+  { question: 'What do you usually do after school?', model: 'I usually do my homework and then watch TV. Sometimes I play soccer with my friends.', points: ['動詞の使い方', '頻度の副詞 (usually, sometimes)', '接続詞 (and, then)'] },
+  { question: 'What is your favorite season and why?', model: 'My favorite season is summer because I can swim in the sea. I also enjoy eating ice cream.', points: ['because を使って理由を述べる', 'I can〜 の表現'] },
+  { question: 'Tell me about your best friend.', model: 'My best friend is Yuki. She is very kind and funny. We have been friends since elementary school.', points: ['人物描写', '現在完了形 (have been)'] },
+  { question: 'What will you do this weekend?', model: 'This weekend I will go shopping with my mother. I want to buy some new shoes.', points: ['未来形 will', 'want to〜 の表現'] },
+  { question: 'Do you like cooking? Why or why not?', model: 'Yes, I like cooking because it is fun and I can make my family happy. I often make curry on weekends.', points: ['理由を because で説明', '頻度の副詞 (often)'] },
+  { question: 'Describe your school. What do you like about it?', model: 'My school is big and has a nice library. I like the library because I can read many books there.', points: ['There is/has の使い方', '関係副詞 where の代わりに there'] },
+  { question: 'What sport do you enjoy and why?', model: 'I enjoy playing basketball because it is exciting. I practice it three times a week with my team.', points: ['enjoy＋動名詞', '頻度の表現'] },
+  { question: 'Have you ever traveled outside Japan? Write about it.', model: 'I have never traveled outside Japan, but I want to visit Australia someday. I am interested in seeing kangaroos.', points: ['現在完了形 (have never)', 'want to', 'be interested in'] },
+  { question: 'What is something you are good at?', model: 'I am good at drawing pictures. I have drawn many pictures since I was young. My friends like my art.', points: ['be good at＋動名詞', '現在完了形'] },
+  { question: 'What do you want to be in the future? Why?', model: 'I want to be a teacher in the future because I like helping people. I think teaching is a wonderful job.', points: ['want to be', 'because で理由'] },
+  { question: 'Tell me about a memorable birthday.', model: 'Last year my friends gave me a surprise party. They made a cake for me and we had a great time together.', points: ['過去形の使い方', '第4文型 gave me'] },
+  { question: 'What kind of music do you like? Why?', model: 'I like pop music because the songs are fun and easy to sing. My favorite singer is BTS.', points: ['because で理由', '形容詞の使い方'] },
+  { question: 'What is important to stay healthy?', model: 'I think sleeping well and eating vegetables are important. I also try to exercise every day.', points: ['動名詞を主語に', 'I think〜 で意見を述べる'] },
+  { question: 'Describe a place you want to visit.', model: 'I want to visit Paris because I am interested in French culture. I also want to see the Eiffel Tower.', points: ['want to visit', 'because', 'be interested in'] },
+  { question: 'What did you do during summer vacation?', model: 'During summer vacation I went to the beach with my family. We swam in the sea and ate seafood. It was really fun.', points: ['過去形', '接続詞 and'] },
+  { question: 'Do you prefer reading books or watching movies? Why?', model: 'I prefer watching movies because they are exciting and I can enjoy them with my family. I watch one movie every week.', points: ['prefer〜ing', 'because', '頻度の表現'] },
+  { question: 'What are your hobbies?', model: 'My hobbies are playing the guitar and taking photos. I started playing the guitar two years ago.', points: ['複数の趣味を and で接続', '現在完了・過去形'] },
+  { question: 'What is the best way to learn English?', model: 'I think the best way to learn English is to practice speaking every day. Watching English movies also helps a lot.', points: ['I think〜 で意見', 'the best way to〜'] },
+  { question: 'Tell me about a person you admire.', model: 'I admire my mother because she works hard every day and always helps me with my homework. She is very kind.', points: ['because で理由', '形容詞で人物描写'] },
+  { question: 'What would you do if you had a million yen?', model: 'If I had a million yen, I would travel around the world. I would also buy a computer for studying.', points: ['仮定法: If I had〜, I would〜', 'also の使い方'] },
+];
+
+// ═══════════════════════════════════════════
+// TYPE D — 語形変化 (Word Form)
+// ═══════════════════════════════════════════
+const TYPE_D = [
+  { sentence: 'I ( go ) to the library yesterday.', word: 'go', answer: 'went', hint: 'goの過去形は不規則変化' },
+  { sentence: 'She is ( study ) English right now.', word: 'study', answer: 'studying', hint: '現在進行形：〜ing形' },
+  { sentence: 'He ( be ) sick last week.', word: 'be', answer: 'was', hint: 'he/she/itのbe動詞の過去形' },
+  { sentence: 'They have ( eat ) lunch already.', word: 'eat', answer: 'eaten', hint: '現在完了形：過去分詞形' },
+  { sentence: 'She ( not / come ) to school yesterday.', word: 'not / come', answer: "didn't come", hint: '過去の否定：didn\'t＋動詞の原形' },
+  { sentence: 'We ( swim ) in this river every summer.', word: 'swim', answer: 'swim', hint: '現在の習慣：主語がweなら原形' },
+  { sentence: 'He ( write ) three letters this morning.', word: 'write', answer: 'wrote', hint: 'writeの過去形は不規則変化' },
+  { sentence: 'I enjoy ( read ) books before bed.', word: 'read', answer: 'reading', hint: 'enjoy＋動名詞（〜ing）' },
+  { sentence: 'She wants ( become ) a nurse.', word: 'become', answer: 'to become', hint: 'want＋to不定詞' },
+  { sentence: 'The movie was ( interest ).', word: 'interest', answer: 'interesting', hint: '物や出来事を説明するときは〜ing形' },
+  { sentence: 'I was ( bore ) during the class.', word: 'bore', answer: 'bored', hint: '人の感情を表すときは〜ed形' },
+  { sentence: 'Ken runs ( fast ) than Tom.', word: 'fast', answer: 'faster', hint: '2つを比較するときは比較級（〜er）' },
+  { sentence: 'This is the ( tall ) building in the city.', word: 'tall', answer: 'tallest', hint: '最上級：the＋〜est' },
+  { sentence: 'She ( have ) breakfast at 7 every morning.', word: 'have', answer: 'has', hint: '3人称単数現在形：〜s/es' },
+  { sentence: 'The window ( break ) by the ball.', word: 'break', answer: 'was broken', hint: '受動態：be動詞＋過去分詞' },
+  { sentence: 'I have ( know ) him for ten years.', word: 'know', answer: 'known', hint: 'knowの過去分詞は不規則変化' },
+  { sentence: 'Please ( not / run ) in the hallway.', word: 'not / run', answer: "don't run", hint: '命令文の否定：Don\'t＋動詞の原形' },
+  { sentence: 'She made me ( feel ) happy.', word: 'feel', answer: 'feel', hint: 'make＋目的語＋動詞の原形（原形不定詞）' },
+  { sentence: 'We were ( surprise ) by the news.', word: 'surprise', answer: 'surprised', hint: '人の感情：〜ed形' },
+  { sentence: 'He ( can / not / speak ) French two years ago.', word: 'can / not / speak', answer: "couldn't speak", hint: '過去の助動詞：couldn\'t＋動詞の原形' },
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let currentType = 'A';
+let state = { correct: 0, wrong: 0, answers: {}, finished: false };
+
+const TYPE_DATA = { A: TYPE_A, B: TYPE_B, C: TYPE_C, D: TYPE_D };
+const TYPE_COLOR = { A: 'var(--accent)', B: 'var(--accent3)', C: 'var(--accent4)', D: 'var(--accent5)' };
+const TYPE_LABELS = {
+  A: '並び替え',
+  B: '空欄補充',
+  C: '英作文',
+  D: '語形変化',
+};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goMenu() { showScreen('menuScreen'); }
+
+function startType(type) {
+  currentType = type;
+  state = { correct: 0, wrong: 0, answers: {}, finished: false };
+  document.getElementById('progFill').className = `prog-fill ${type}`;
+
+  const finBtn = document.getElementById('finishBtn');
+  finBtn.className = 'finish-btn';
+  finBtn.style.cssText = '';
+  finBtn.classList.remove('visible');
+  if (type === 'A') { finBtn.style.background = 'var(--accent)'; finBtn.style.color = '#000'; }
+  else if (type === 'B') { finBtn.style.background = 'var(--accent3)'; finBtn.style.color = '#000'; }
+  else if (type === 'C') { finBtn.style.background = 'var(--accent4)'; finBtn.style.color = '#fff'; }
+  else { finBtn.style.background = 'var(--accent5)'; finBtn.style.color = '#000'; }
+
+  showScreen('quizScreen');
+  renderQuestions();
+}
+
+function renderQuestions() {
+  const qs = TYPE_DATA[currentType];
+  const area = document.getElementById('questionsArea');
+  let html = '';
+
+  qs.forEach((q, i) => {
+    if (currentType === 'A') {
+      const shuffled = [...q.words].sort(() => Math.random() - 0.5);
+      window._chipData = window._chipData || {};
+      window._chipData[i] = { shuffled, selected: [] };
+      const chipHtml = shuffled.map((w,wi) => `<span class="chip" id="chip${i}_${wi}" onclick="selectChip(${i},${wi})">${w}</span>`).join('');
+      html += `
+        <div class="qblock" id="qblock${i}">
+          <div class="qnum">問 ${i+1} / ${qs.length}</div>
+          <div class="qtype-badge A">Type A — 並び替え</div>
+          <div class="qinstruction">単語をタップして正しい順に並べなさい。並べた単語をタップすると戻せます。</div>
+          <div class="chip-area-label">WORD POOL</div>
+          <div class="word-chips" id="pool${i}">${chipHtml}</div>
+          <div class="chip-area-label" style="margin-top:10px">YOUR ANSWER</div>
+          <div class="answer-slots" id="slots${i}"><span class="slot-placeholder">ここに単語が並びます</span></div>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <button class="check-btn A" id="btn${i}" onclick="checkA(${i})">✓ 確認</button>
+            <button class="check-btn" style="background:var(--panel2);color:var(--text-dim);box-shadow:none;border:1.5px solid var(--border)" onclick="clearSlots(${i})">✕ クリア</button>
+          </div>
+          <div class="feedback" id="fb${i}"></div>
+          <button class="model-btn" id="hintbtn${i}" onclick="showHintA(${i})">💡 ヒント</button>
+          <div class="hint-text model-answer" id="hint${i}"></div>
+        </div>`;
+    } else if (currentType === 'B') {
+      html += `
+        <div class="qblock" id="qblock${i}">
+          <div class="qnum">問 ${i+1} / ${qs.length}</div>
+          <div class="qtype-badge B">Type B — 空欄補充</div>
+          <div class="qinstruction">空欄に入る最も適切な語を書きなさい。</div>
+          <div class="qtext">${q.sentence}</div>
+          <div style="margin-bottom:12px">
+            <button class="model-btn" onclick="toggleJp(${i})" id="jpbtn${i}">🇯🇵 日本語訳を見る（任意）</button>
+            <div class="model-answer" id="jp${i}" style="color:var(--accent3);border-color:rgba(255,221,0,0.3);background:rgba(255,221,0,0.05);margin-top:6px">${q.jp}</div>
+          </div>
+          <div class="ans-row">
+            <input class="ans-input" id="input${i}" type="text" placeholder="答えを入力…" autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="handleKey(event,${i},'B')">
+            <button class="check-btn B" id="btn${i}" onclick="checkB(${i})">確認</button>
+          </div>
+          <div class="feedback" id="fb${i}"></div>
+          <button class="model-btn" id="hintbtn${i}" onclick="showHintById(${i})">💡 ヒント</button>
+          <div class="hint-text model-answer" id="hint${i}"></div>
+        </div>`;
+    } else if (currentType === 'C') {
+      html += `
+        <div class="qblock" id="qblock${i}">
+          <div class="qnum">問 ${i+1} / ${qs.length}</div>
+          <div class="qtype-badge C">Type C — 英作文</div>
+          <div class="qinstruction">次の質問に1〜3文の英語で答えなさい。</div>
+          <div class="qtext">${q.question}</div>
+          <textarea class="ans-textarea" id="input${i}" placeholder="英語で答えを書いてください…" ${state.answers[i] ? 'disabled' : ''}></textarea>
+          <button class="check-btn C" id="btn${i}" onclick="checkC(${i})" ${state.answers[i] ? 'disabled' : ''}>提出する</button>
+          <div class="feedback" id="fb${i}"></div>
+          <button class="model-btn" id="modelbtn${i}" onclick="showModel(${i})" style="display:none">📖 模範解答を見る</button>
+          <div class="model-answer" id="model${i}">
+            <strong>模範解答:</strong><br>${q.model}<br><br>
+            <strong>チェックポイント:</strong><br>${q.points.map(p=>`・${p}`).join('<br>')}
+          </div>
+        </div>`;
+    } else if (currentType === 'D') {
+      html += `
+        <div class="qblock" id="qblock${i}">
+          <div class="qnum">問 ${i+1} / ${qs.length}</div>
+          <div class="qtype-badge D">Type D — 語形変化</div>
+          <div class="qinstruction">（　）内の語を適切な形に変えなさい。</div>
+          <div class="qtext">${q.sentence}</div>
+          <div class="ans-row">
+            <input class="ans-input" id="input${i}" type="text" placeholder="正しい形を入力…" autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="handleKey(event,${i},'D')">
+            <button class="check-btn D" id="btn${i}" onclick="checkD(${i})">確認</button>
+          </div>
+          <div class="feedback" id="fb${i}"></div>
+          <button class="model-btn" id="hintbtn${i}" onclick="showHint(${i},'${q.hint.replace(/'/g,"\\'")}')">💡 ヒント</button>
+          <div class="hint-text model-answer" id="hint${i}"></div>
+        </div>`;
+    }
+  });
+
+  area.innerHTML = html;
+  updateProgress();
+}
+
+function handleKey(e, i, type) {
+  if (e.key === 'Enter') {
+    if (type === 'A') checkA(i);
+    else if (type === 'B') checkB(i);
+    else if (type === 'D') checkD(i);
+  }
+}
+
+function normalize(s) {
+  return s.trim().toLowerCase().replace(/\s+/g, ' ').replace(/[.?!,]/g, '');
+}
+
+function markResult(i, isOk, correctAns, inputId, btnId) {
+  const input = document.getElementById(inputId || `input${i}`);
+  const btn = document.getElementById(btnId || `btn${i}`);
+  const fb = document.getElementById(`fb${i}`);
+
+  if (input) { input.disabled = true; input.classList.add(isOk ? 'correct' : 'wrong'); }
+  if (btn) btn.disabled = true;
+
+  if (isOk) {
+    state.correct++;
+    fb.className = 'feedback ok';
+    fb.textContent = `✓ 正解！ ${correctAns}`;
+  } else {
+    state.wrong++;
+    fb.className = 'feedback ng';
+    fb.textContent = `✗ 不正解。正しい答え：${correctAns}`;
+  }
+
+  state.answers[i] = true;
+  updateProgress();
+  checkAllDone();
+  scrollToNext(i);
+}
+
+function selectChip(qi, wi) {
+  if (state.answers[qi]) return;
+  const d = window._chipData[qi];
+  if (d.selected.includes(wi)) return;
+  d.selected.push(wi);
+  // mark chip as used
+  document.getElementById(`chip${qi}_${wi}`).classList.add('used');
+  renderSlots(qi);
+}
+
+function removeFromSlot(qi, slotIdx) {
+  if (state.answers[qi]) return;
+  const d = window._chipData[qi];
+  const wi = d.selected[slotIdx];
+  d.selected.splice(slotIdx, 1);
+  document.getElementById(`chip${qi}_${wi}`).classList.remove('used');
+  renderSlots(qi);
+}
+
+function renderSlots(qi) {
+  const d = window._chipData[qi];
+  const slotsEl = document.getElementById(`slots${qi}`);
+  if (d.selected.length === 0) {
+    slotsEl.classList.remove('has-words');
+    slotsEl.innerHTML = '<span class="slot-placeholder">ここに単語が並びます</span>';
+  } else {
+    slotsEl.classList.add('has-words');
+    slotsEl.innerHTML = d.selected.map((wi, si) =>
+      `<span class="slot-chip" onclick="removeFromSlot(${qi},${si})">${d.shuffled[wi]}</span>`
+    ).join('');
+  }
+}
+
+function clearSlots(qi) {
+  if (state.answers[qi]) return;
+  const d = window._chipData[qi];
+  d.selected.forEach(wi => document.getElementById(`chip${qi}_${wi}`).classList.remove('used'));
+  d.selected = [];
+  renderSlots(qi);
+}
+
+function checkA(i) {
+  if (state.answers[i]) return;
+  const q = TYPE_A[i];
+  const d = window._chipData[i];
+  if (!d || d.selected.length === 0) return;
+  const given = d.selected.map(wi => d.shuffled[wi]).join(' ');
+  const isOk = normalize(given) === normalize(q.answer);
+  // disable all chips and slots
+  d.selected.forEach(wi => {
+    const el = document.getElementById(`chip${i}_${wi}`);
+    if (el) el.style.pointerEvents = 'none';
+  });
+  document.getElementById(`slots${i}`).style.pointerEvents = 'none';
+  markResult(i, isOk, q.answer);
+}
+
+function checkB(i) {
+  if (state.answers[i]) return;
+  const q = TYPE_B[i];
+  const given = document.getElementById(`input${i}`).value;
+  if (!given.trim()) return;
+  const isOk = given.trim().toLowerCase() === q.answer.toLowerCase();
+  markResult(i, isOk, q.answer);
+}
+
+function checkC(i) {
+  if (state.answers[i]) return;
+  const input = document.getElementById(`input${i}`);
+  const given = input.value.trim();
+  if (!given) return;
+
+  input.disabled = true;
+  document.getElementById(`btn${i}`).disabled = true;
+  state.answers[i] = true;
+  state.correct++; // writing: always give credit, show model answer
+
+  const fb = document.getElementById(`fb${i}`);
+  fb.className = 'feedback info';
+  fb.textContent = '✓ 提出しました！模範解答と比べてみよう。';
+
+  const modelbtn = document.getElementById(`modelbtn${i}`);
+  if (modelbtn) modelbtn.style.display = 'inline-block';
+
+  updateProgress();
+  checkAllDone();
+  scrollToNext(i);
+}
+
+function checkD(i) {
+  if (state.answers[i]) return;
+  const q = TYPE_D[i];
+  const given = document.getElementById(`input${i}`).value;
+  if (!given.trim()) return;
+  const isOk = given.trim().toLowerCase() === q.answer.toLowerCase();
+  markResult(i, isOk, q.answer);
+}
+
+function showHintById(i) {
+  const q = TYPE_B[i];
+  showHint(i, q.hint);
+}
+
+function showHintA(i) {
+  const q = TYPE_A[i];
+  showHint(i, q.hint);
+}
+
+function toggleJp(i) {
+  const el = document.getElementById('jp' + i);
+  const btn = document.getElementById('jpbtn' + i);
+  el.classList.toggle('visible');
+  btn.textContent = el.classList.contains('visible') ? '🇯🇵 日本語訳を隠す' : '🇯🇵 日本語訳を見る（任意）';
+}
+
+function showHint(i, hint) {
+  const el = document.getElementById(`hint${i}`);
+  const btn = document.getElementById(`hintbtn${i}`);
+  el.textContent = hint;
+  el.classList.add('visible');
+  if (btn) btn.style.display = 'none';
+}
+
+function showModel(i) {
+  const el = document.getElementById(`model${i}`);
+  const btn = document.getElementById(`modelbtn${i}`);
+  el.classList.add('visible');
+  if (btn) btn.style.display = 'none';
+}
+
+function updateProgress() {
+  const total = TYPE_DATA[currentType].length;
+  const answered = Object.keys(state.answers).length;
+  const pct = Math.round(answered / total * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLabel').textContent = `${answered} / ${total}`;
+  document.getElementById('scoreCorrect').textContent = `✓ ${state.correct}`;
+  document.getElementById('scoreWrong').textContent = `✗ ${state.wrong}`;
+}
+
+function checkAllDone() {
+  const total = TYPE_DATA[currentType].length;
+  if (Object.keys(state.answers).length === total) {
+    const finBtn = document.getElementById('finishBtn');
+    finBtn.classList.add('visible');
+    setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 300);
+  }
+}
+
+function scrollToNext(i) {
+  const total = TYPE_DATA[currentType].length;
+  for (let j = i + 1; j < total; j++) {
+    if (!state.answers[j]) {
+      setTimeout(() => {
+        const el = document.getElementById(`qblock${j}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+      break;
+    }
+  }
+}
+
+function showResult() {
+  const total = TYPE_DATA[currentType].length;
+  const pct = currentType === 'C' ? 100 : Math.round(state.correct / total * 100);
+  let emoji, title;
+  if (pct === 100)    { emoji='🌟'; title='満点！Perfect!'; }
+  else if (pct >= 80) { emoji='🏆'; title='Great job!'; }
+  else if (pct >= 60) { emoji='📝'; title='Good! Keep practicing!'; }
+  else                { emoji='💪'; title='もう一度チャレンジしよう！'; }
+
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultSub').textContent = `${TYPE_LABELS[currentType]} · ${total}問`;
+  document.getElementById('rCorrect').textContent = currentType === 'C' ? total : state.correct;
+  document.getElementById('rWrong').textContent = currentType === 'C' ? '—' : state.wrong;
+  document.getElementById('rPct').textContent = pct + '%';
+
+  const retryBtn = document.getElementById('retryBtn');
+  retryBtn.className = `btn-primary ${currentType}`;
+
+  showScreen('resultScreen');
+}
+
+function retryType() { startType(currentType); }
+</script>
+</body>
+</html>
