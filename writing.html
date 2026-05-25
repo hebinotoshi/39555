@@ -515,7 +515,7 @@ function handleKey(e, i, type) {
 }
 
 function normalize(s) {
-  return s.trim().toLowerCase().replace(/\s+/g, ' ').replace(/[.?!,]/g, '');
+  return s.trim().toLowerCase().replace(/[.?!,]/g, '').replace(/\s+/g, ' ').trim();
 }
 
 function markResult(i, isOk, correctAns, inputId, btnId) {
