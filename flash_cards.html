@@ -194,21 +194,21 @@
   .card-tag { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 14px; }
   .card-front .card-tag { color: var(--accent4); opacity: 0.7; }
   .card-back .card-tag { color: var(--accent); opacity: 0.7; }
-  .card-word { font-size: clamp(26px, 8vw, 40px); font-weight: 800; line-height: 1.2; }
+  .card-word { font-size: clamp(30px, 9vw, 46px); font-weight: 800; line-height: 1.2; }
   .card-front .card-word { color: #fff; }
   .card-back .card-word { color: var(--accent); }
   .card-hint { font-size: 12px; color: var(--text-dim); margin-top: 10px; }
-  .card-tap-hint { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); margin-top: 14px; letter-spacing: 1px; animation: blink 1.5s ease-in-out infinite; }
+  .card-tap-hint { font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--text-dim); margin-top: 14px; letter-spacing: 1px; animation: blink 1.5s ease-in-out infinite; }
   @keyframes blink { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
   /* flashcard nav */
   .card-nav { display: flex; gap: 10px; margin-bottom: 14px; }
   .nav-btn {
-    flex: 1; padding: 13px;
+    flex: 1; padding: 18px 13px;
     border: 2px solid var(--border);
     background: var(--panel2); color: var(--text);
     border-radius: 4px; cursor: pointer;
-    font-family: 'Press Start 2P', monospace; font-size: 8px;
+    font-family: 'Press Start 2P', monospace; font-size: 10px;
     transition: all 0.12s; text-align: center;
   }
   .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -234,7 +234,7 @@
     justify-content: center;
   }
   .type-tag { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--accent4); opacity: 0.7; letter-spacing: 2px; margin-bottom: 14px; }
-  .type-word { font-size: clamp(28px, 9vw, 44px); font-weight: 800; color: #fff; margin-bottom: 6px; }
+  .type-word { font-size: clamp(32px, 10vw, 50px); font-weight: 800; color: #fff; margin-bottom: 6px; }
   .type-num { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); }
 
   .input-row { display: flex; gap: 10px; margin-bottom: 12px; }
@@ -246,7 +246,7 @@
     padding: 13px 16px;
     border-radius: 4px;
     font-family: 'M PLUS Rounded 1c', sans-serif;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     outline: none;
     transition: border-color 0.15s;
@@ -300,14 +300,14 @@
   /* missed words review */
   .missed-block { background: var(--panel2); border: 1px solid var(--border); border-radius: 4px; padding: 14px; margin: 14px 0; max-height: 220px; overflow-y: auto; text-align: left; }
   .missed-title { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--wrong); margin-bottom: 10px; }
-  .missed-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; gap: 12px; }
+  .missed-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 15px; gap: 12px; }
   .missed-row:last-child { border-bottom: none; }
   .missed-jp { color: var(--text-dim); }
   .missed-en { color: var(--correct); font-weight: 700; }
 
-  .btn-primary { display:block;width:100%;background:var(--accent4);color:#fff;border:none;padding:14px 20px;font-family:'Press Start 2P',monospace;font-size:10px;cursor:pointer;border-radius:4px;margin-bottom:10px;letter-spacing:1px;transition:all 0.15s;box-shadow:0 4px 0 rgba(100,0,200,0.4); }
+  .btn-primary { display:block;width:100%;background:var(--accent4);color:#fff;border:none;padding:18px 20px;font-family:'Press Start 2P',monospace;font-size:11px;cursor:pointer;border-radius:4px;margin-bottom:12px;letter-spacing:1px;transition:all 0.15s;box-shadow:0 4px 0 rgba(100,0,200,0.4); }
   .btn-primary:hover { transform:translateY(-2px); }
-  .btn-secondary { display:block;width:100%;background:transparent;color:var(--text-dim);border:2px solid var(--border);padding:12px 20px;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;border-radius:4px;margin-bottom:10px;transition:all 0.15s; }
+  .btn-secondary { display:block;width:100%;background:transparent;color:var(--text-dim);border:2px solid var(--border);padding:16px 20px;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;border-radius:4px;margin-bottom:12px;transition:all 0.15s; }
   .btn-secondary:hover { border-color:var(--text-dim);color:var(--text); }
 
   .damage-flash { position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:999;opacity:0;transition:opacity 0.12s; }
@@ -417,7 +417,9 @@
       <button class="nav-btn know" id="btnKnow" onclick="markCard(true)" disabled>✓ わかった！<br><span style="font-size:7px;opacity:0.7">Got it</span></button>
     </div>
 
-    <button class="btn-secondary" onclick="goSetup()">← 設定に戻る / Back to setup</button>
+    <div style="margin-top:32px;border-top:1px solid var(--border);padding-top:24px;">
+      <button class="btn-secondary" onclick="goSetup()">← 設定に戻る / Back to setup</button>
+    </div>
   </div>
 
   <!-- ══ TYPING SCREEN ══ -->
@@ -446,7 +448,9 @@
     <div class="feedback-box" id="typeFeedback"></div>
     <button class="next-btn" id="typeNextBtn" onclick="typeNext()">NEXT WORD ▶</button>
 
-    <button class="btn-secondary" style="margin-top:8px" onclick="goSetup()">← 設定に戻る / Back to setup</button>
+    <div style="margin-top:32px;border-top:1px solid var(--border);padding-top:24px;">
+      <button class="btn-secondary" onclick="goSetup()">← 設定に戻る / Back to setup</button>
+    </div>
   </div>
 
   <!-- ══ RESULT SCREEN ══ -->
@@ -669,46 +673,23 @@ function flipCard() {
 
 function markCard(knew) {
   if (!session.flipped) return;
-
-  const inner = document.getElementById('cardInner');
-
-  // disable animation temporarily
-  inner.style.transition = 'none';
-
-  // instantly hide back face
-  inner.classList.remove('flipped');
-
-  // force repaint
-  void inner.offsetWidth;
-
-  session.flipped = false;
-
-  document.getElementById('btnKnow').disabled = true;
-  document.getElementById('btnAgain').disabled = true;
-
   const card = session.queue.shift();
-
   if (knew) {
     session.knowCount++;
     flash('cor-flash');
   } else {
     session.againCount++;
-    session.queue.push(card);
+    session.queue.push(card); // push to end to retry
     flash('wrn-flash');
   }
-
-  requestAnimationFrame(() => {
-    // restore animation
-    inner.style.transition = 'transform 0.45s cubic-bezier(0.4,0,0.2,1)';
-
-    if (session.queue.length === 0) {
-      session.correct = session.knowCount;
-      session.wrong = session.againCount;
-      showResult();
-    } else {
-      renderFlashCard();
-    }
-  });
+  // if all done (queue empty)
+  if (session.queue.length === 0) {
+    session.correct = session.knowCount;
+    session.wrong = session.againCount;
+    showResult();
+  } else {
+    renderFlashCard();
+  }
 }
 
 // ===== TYPING MODE =====
