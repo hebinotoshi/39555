@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Practice Hub</title>
+    <!-- Material Design Fonts & Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    <style>
+        :root {
+            --md-primary: #6200ee;
+            --md-surface: #ffffff;
+            --md-background: #f5f5f5;
+            --md-text-primary: rgba(0, 0, 0, 0.87);
+            --md-text-secondary: rgba(0, 0, 0, 0.6);
+            --md-shadow: 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12), 0px 2px 4px -1px rgba(0,0,0,0.2);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--md-background);
+            color: var(--md-text-primary);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .welcome-card {
+            background: var(--md-surface);
+            padding: 40px 24px;
+            border-radius: 8px;
+            box-shadow: var(--md-shadow);
+        }
+
+        .icon-header {
+            font-size: 64px;
+            color: var(--md-primary);
+            margin-bottom: 16px;
+        }
+
+        h1 { 
+            font-weight: 500; 
+            margin: 0 0 12px 0; 
+            color: var(--md-primary); 
+            font-size: 32px;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--md-text-secondary);
+            margin: 0 0 32px 0;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--md-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 24px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.25px;
+            text-decoration: none;
+            box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12);
+            transition: box-shadow 0.2s, background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            box-shadow: var(--md-shadow);
+            background-color: #5200cc;
+        }
+
+        .btn-primary .material-icons {
+            margin-left: 8px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="welcome-card">
+        <span class="material-icons icon-header">translate</span>
+        <h1>Language Hub</h1>
+        <p>Welcome! Boost your English and Japanese vocabulary retention using dynamic, randomized smart flashcards pulled instantly from your database.</p>
+        
+        <!-- Link pointing directly to your game file -->
+        <a href="flash_game.html" class="btn-primary">
+            Start Flashcards
+            <span class="material-icons">style</span>
+        </a>
+    </div>
+</div>
+
+</body>
+</html>
