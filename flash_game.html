@@ -214,7 +214,7 @@
                     statusEl.textContent = `Loaded ${rawCards.length} words successfully!`;
                     document.getElementById('start-btn').disabled = false;
                 } else {
-                    throw new Error('vocab.csv is empty or missing data tabs.');
+                    throw new Error('vocab.csv is empty or format mismatch.');
                 }
             })
             .catch(error => {
@@ -231,12 +231,16 @@
         lines.forEach(line => {
             if (!line.trim()) return;
             
-            // Splits by tab character
-            const parts = line.split('\t');
-            if(parts.length >= 2) {
+            // Splits lines based on the first comma it runs into
+            const firstCommaIndex = line.indexOf(',');
+            
+            if (firstCommaIndex !== -1) {
+                const enPart = line.substring(0, firstCommaIndex).trim();
+                const jpPart = line.substring(firstCommaIndex + 1).trim();
+                
                 rawCards.push({
-                    en: parts[0].trim(),
-                    jp: parts[1].trim()
+                    en: enPart,
+                    jp: jpPart
                 });
             }
         });
@@ -245,7 +249,7 @@
     function startGame() {
         if (rawCards.length === 0) return;
 
-        // Perfect true-random shuffle
+        // Shuffle deck
         let shuffled = [...rawCards].sort(() => 0.5 - Math.random());
         
         const choice = document.getElementById('card-count').value;
@@ -266,7 +270,6 @@
         
         document.getElementById('flashcard').classList.remove('flipped');
         
-        // Short timeout allows the flip-back animation to finish smoothly
         setTimeout(() => {
             document.getElementById('front-text').textContent = gameCards[currentIndex].en;
             document.getElementById('back-text').textContent = gameCards[currentIndex].jp;
