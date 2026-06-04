@@ -36,7 +36,6 @@
             position: relative;
         }
 
-        /* Setup Screen styles */
         .card-setup {
             background: var(--md-surface);
             padding: 24px;
@@ -54,9 +53,7 @@
             font-weight: 500;
         }
         
-        .status-message.error {
-            color: #c62828;
-        }
+        .status-message.error { color: #c62828; }
 
         select, button {
             font-family: 'Roboto', sans-serif;
@@ -83,17 +80,17 @@
             justify-content: center;
         }
 
-        button.btn-primary:hover {
-            box-shadow: var(--md-shadow);
-        }
+        button.btn-primary:hover { box-shadow: var(--md-shadow); }
 
-        /* Top Bar for Game Screen Controls */
         .game-top-bar {
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
             width: 100%;
         }
+
+        .top-bar-left { display: flex; }
 
         button.btn-icon {
             background: none;
@@ -113,11 +110,54 @@
             color: var(--md-primary);
         }
 
-        /* Flashcard styles */
-        .game-section {
-            display: none;
-            width: 100%;
+        /* Speaker button — lives inside the card */
+        .speak-btn {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            color: var(--md-primary);
+            opacity: 0.55;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s, background-color 0.2s;
+            z-index: 10;
         }
+
+        .speak-btn:hover {
+            opacity: 1;
+            background-color: rgba(98, 0, 238, 0.08);
+        }
+
+        .speak-btn.speaking {
+            opacity: 1;
+            color: #6200ee;
+            animation: pulse 0.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to   { transform: scale(1.2); }
+        }
+
+        /* TTS unavailable badge */
+        .tts-badge {
+            font-size: 11px;
+            color: var(--md-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.06);
+        }
+
+        .game-section { display: none; width: 100%; }
 
         .flashcard-wrapper {
             perspective: 1000px;
@@ -135,9 +175,7 @@
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .flashcard.flipped {
-            transform: rotateY(180deg);
-        }
+        .flashcard.flipped { transform: rotateY(180deg); }
 
         .card-face {
             position: absolute;
@@ -155,19 +193,12 @@
             padding: 24px;
         }
 
-        .card-front {
-            color: var(--md-primary);
-        }
+        .card-front { color: var(--md-primary); }
+        .card-back  { transform: rotateY(180deg); background-color: #fafafa; }
 
-        .card-back {
-            transform: rotateY(180deg);
-            background-color: #fafafa;
-        }
+        .word  { font-size: 26px; font-weight: 400; line-height: 1.4; }
+        .label { font-size: 12px; color: var(--md-text-secondary); text-transform: uppercase; margin-bottom: 10px; }
 
-        .word { font-size: 26px; font-weight: 400; line-height: 1.4; }
-        .label { font-size: 12px; color: var(--md-text-secondary); text-transform: uppercase; margin-bottom: 10px;}
-
-        /* Controls */
         .controls {
             display: flex;
             justify-content: space-between;
@@ -175,10 +206,7 @@
             margin-top: 20px;
         }
 
-        .progress {
-            color: var(--md-text-secondary);
-            font-size: 14px;
-        }
+        .progress { color: var(--md-text-secondary); font-size: 14px; }
     </style>
 </head>
 <body>
@@ -186,9 +214,7 @@
 <div class="container">
     <div id="setup-screen" class="card-setup">
         <h1>Flashcard Setup</h1>
-        
         <div id="status-text" class="status-message">Fetching vocabulary...</div>
-
         <div>
             <label for="card-count">Cards to play:</label>
             <select id="card-count">
@@ -204,16 +230,23 @@
 
     <div id="game-screen" class="game-section">
         <div class="game-top-bar">
-            <button class="btn-icon" onclick="goHome()" title="Go Home">
-                <span class="material-icons">home</span>
-            </button>
+            <div class="top-bar-left">
+                <button class="btn-icon" onclick="goHome()" title="Go Home">
+                    <span class="material-icons">home</span>
+                </button>
+            </div>
+            <div id="tts-status"></div>
         </div>
 
-        <div class="flashcard-wrapper" onclick="flipCard()">
+        <div class="flashcard-wrapper" onclick="handleCardClick(event)">
             <div id="flashcard" class="flashcard">
                 <div class="card-face card-front">
                     <span class="label">English</span>
                     <span id="front-text" class="word">Word</span>
+                    <!-- Speaker button — click speaks without flipping -->
+                    <button class="speak-btn" id="speak-btn" title="Hear pronunciation" onclick="speakCurrent(event)">
+                        <span class="material-icons" style="font-size:22px">volume_up</span>
+                    </button>
                 </div>
                 <div class="card-face card-back">
                     <span class="label">Japanese</span>
@@ -221,7 +254,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="controls">
             <button class="btn-primary" onclick="prevCard()"><span class="material-icons">arrow_back</span></button>
             <span id="progress-text" class="progress">0 / 0</span>
@@ -235,13 +268,64 @@
     let gameCards = [];
     let currentIndex = 0;
 
-    // Automatically fetch vocab.csv from the server on load
+    // ── TTS setup ────────────────────────────────────────────────────────────
+    const ttsAvailable = 'speechSynthesis' in window;
+    let enVoice = null;
+
+    function initVoices() {
+        const voices = window.speechSynthesis.getVoices();
+        // Prefer a native English voice; fall back to any en voice
+        enVoice =
+            voices.find(v => v.lang === 'en-US' && !v.localService === false) ||
+            voices.find(v => v.lang === 'en-US') ||
+            voices.find(v => v.lang.startsWith('en')) ||
+            null;
+    }
+
+    if (ttsAvailable) {
+        // Voices may load async (especially on Chrome)
+        speechSynthesis.addEventListener('voiceschanged', initVoices);
+        initVoices();
+    }
+
+    function speak(text) {
+        if (!ttsAvailable || !text) return;
+        window.speechSynthesis.cancel();
+        const utt = new SpeechSynthesisUtterance(text);
+        utt.lang  = 'en-US';
+        utt.rate  = 0.9;
+        if (enVoice) utt.voice = enVoice;
+
+        const btn = document.getElementById('speak-btn');
+        btn.classList.add('speaking');
+        utt.onend = utt.onerror = () => btn.classList.remove('speaking');
+
+        window.speechSynthesis.speak(utt);
+    }
+
+    function speakCurrent(event) {
+        // Prevent the click from bubbling up to the card-flip handler
+        event.stopPropagation();
+        if (gameCards.length === 0) return;
+        speak(gameCards[currentIndex].en);
+    }
+
+    // ── Card click: flip unless user clicked the speak button ────────────────
+    function handleCardClick(event) {
+        flipCard();
+    }
+
+    // ── CSV fetch ─────────────────────────────────────────────────────────────
     window.addEventListener('DOMContentLoaded', () => {
+        // Show TTS status badge once game screen is shown
+        if (!ttsAvailable) {
+            document.getElementById('tts-status').innerHTML =
+                '<span class="tts-badge"><span class="material-icons" style="font-size:14px">volume_off</span> No TTS</span>';
+        }
+
         fetch('vocab.csv')
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Could not find vocab.csv on the server.');
-                }
+                if (!response.ok) throw new Error('Could not find vocab.csv on the server.');
                 return response.text();
             })
             .then(text => {
@@ -264,50 +348,41 @@
     function parseTestData(text) {
         rawCards = [];
         const lines = text.split('\n');
-        
         lines.forEach(line => {
             if (!line.trim()) return;
-            
             const firstCommaIndex = line.indexOf(',');
-            
             if (firstCommaIndex !== -1) {
                 const enPart = line.substring(0, firstCommaIndex).trim();
                 const jpPart = line.substring(firstCommaIndex + 1).trim();
-                
-                rawCards.push({
-                    en: enPart,
-                    jp: jpPart
-                });
+                rawCards.push({ en: enPart, jp: jpPart });
             }
         });
     }
 
+    // ── Game flow ─────────────────────────────────────────────────────────────
     function startGame() {
         if (rawCards.length === 0) return;
-
         let shuffled = [...rawCards].sort(() => 0.5 - Math.random());
-        
         const choice = document.getElementById('card-count').value;
-        const count = choice === 'all' ? shuffled.length : parseInt(choice);
-        const actualCount = Math.min(count, shuffled.length);
-        
-        gameCards = shuffled.slice(0, actualCount);
-        currentIndex = 0;
+        const count  = choice === 'all' ? shuffled.length : parseInt(choice);
+        gameCards     = shuffled.slice(0, Math.min(count, shuffled.length));
+        currentIndex  = 0;
 
         document.getElementById('setup-screen').style.display = 'none';
-        document.getElementById('game-screen').style.display = 'block';
-        
+        document.getElementById('game-screen').style.display  = 'block';
+
+        // Hide speak button if TTS not available
+        document.getElementById('speak-btn').style.display = ttsAvailable ? 'flex' : 'none';
+
         updateCard();
     }
 
     function updateCard() {
-        if(gameCards.length === 0) return;
-        
+        if (gameCards.length === 0) return;
         document.getElementById('flashcard').classList.remove('flipped');
-        
         setTimeout(() => {
             document.getElementById('front-text').textContent = gameCards[currentIndex].en;
-            document.getElementById('back-text').textContent = gameCards[currentIndex].jp;
+            document.getElementById('back-text').textContent  = gameCards[currentIndex].jp;
             document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${gameCards.length}`;
         }, 150);
     }
@@ -330,14 +405,11 @@
         }
     }
 
-    // New function to return to the setup dashboard
     function goHome() {
-        // Reset card orientation so it doesn't stay flipped on the next game
+        window.speechSynthesis.cancel();
         document.getElementById('flashcard').classList.remove('flipped');
-        
-        // Short timeout allows smooth flip transition animation if card was upside down
         setTimeout(() => {
-            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display  = 'none';
             document.getElementById('setup-screen').style.display = 'block';
         }, 150);
     }
