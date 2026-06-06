@@ -854,7 +854,7 @@ function speakCurrent(e) {
 // ── Auth ───────────────────────────────────────────────────────────
 function signInGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider);
+    auth.signInWithRedirect(provider);
 }
 
 function signInGuest() {
@@ -871,6 +871,9 @@ function signOut() {
     progress = {};
     showScreen('auth-screen');
 }
+
+// Handle redirect result on page load
+auth.getRedirectResult().catch(err => console.error('Redirect error:', err));
 
 auth.onAuthStateChanged(async user => {
     if (!user) return;
