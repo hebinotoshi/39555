@@ -762,7 +762,7 @@
 // ── Firebase init ──────────────────────────────────────────────────
 const firebaseConfig = {
     apiKey: "AIzaSyBcoxCeVXnZ840gNcHI1GXknZ8F9qwasUg",
-    authDomain: "flashcards-30083.firebaseapp.com",
+    authDomain: "flashcards-30083.firebaseapp.com", // keep as firebaseapp.com, not web.app
     projectId: "flashcards-30083",
     storageBucket: "flashcards-30083.firebasestorage.app",
     messagingSenderId: "415432035718",
@@ -854,7 +854,15 @@ function speakCurrent(e) {
 // ── Auth ───────────────────────────────────────────────────────────
 function signInGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithRedirect(provider);
+    provider.setCustomParameters({ prompt: 'select_account' });
+    auth.signInWithPopup(provider).catch(err => {
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
+            auth.signInWithRedirect(provider);
+        } else {
+            console.error('Auth error:', err.code, err.message);
+            alert('Sign-in failed: ' + err.code + ' — ' + err.message);
+        }
+    });
 }
 
 function signInGuest() {
