@@ -242,10 +242,17 @@ function loadVocab() {
 }
 
 // ── Save progress ──────────────────────────────────────────────────
-async function saveProgress() {
-    if (isGuest) lsSave(progress);
-    else await fsSave(currentUser.uid, progress);
+// Saves locally on every card rating (fast, no Firebase quota used).
+// Firebase is only written at session end via syncToFirebase().
+function saveProgress() {
+    lsSave(progress);
     updateSetupStats();
+}
+
+async function syncToFirebase() {
+    if (!isGuest && currentUser) {
+        await fsSave(currentUser.uid, progress);
+    }
 }
 
 // ── Deck builders ──────────────────────────────────────────────────
@@ -423,11 +430,13 @@ function showSummary() {
     retryBtn.style.display = review > 0 ? 'block' : 'none';
     if (review > 0) retryBtn.textContent = `Review ${review} flagged cards`;
 
+    syncToFirebase();
     showScreen('summary-screen');
 }
 
 function goHome() {
     if (ttsAvailable) speechSynthesis.cancel();
+    syncToFirebase();
     updateSetupStats();
     showScreen('setup-screen');
 }
