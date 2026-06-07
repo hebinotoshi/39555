@@ -345,8 +345,9 @@ function updateFavButtons(isFav) {
 }
 
 function handleCardClick(e) {
+    const card = document.getElementById('flashcard');
     if (!isFlipped) {
-        document.getElementById('flashcard').classList.add('flipped');
+        card.classList.add('flipped');
         isFlipped = true;
         document.getElementById('feedback-row').classList.add('visible');
 
@@ -355,8 +356,13 @@ function handleCardClick(e) {
         const p     = migrateEntry(progress[c.en]);
         const badge = document.getElementById('card-status-badge');
         const s     = p.status;
-        badge.textContent = s === 'known' ? '✓ known' : s === 'review' ? '↺ review' : '? unknown';
+        badge.textContent = s === 'known' ? '\u2713 known' : s === 'review' ? '\u21ba review' : '? unknown';
         badge.style.color = s === 'known' ? 'var(--green)' : s === 'review' ? 'var(--red)' : 'var(--blue)';
+    } else {
+        card.classList.remove('flipped');
+        isFlipped = false;
+        document.getElementById('feedback-row').classList.remove('visible');
+        document.getElementById('card-status-badge').textContent = '';
     }
 }
 
